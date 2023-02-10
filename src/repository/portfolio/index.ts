@@ -1,5 +1,5 @@
 // models
-import ModelPortfolio from "../models/portfolio";
+import ModelPortfolio from "../../models/portfolio";
 
 export default class PortfolioRepository{
     static async get(id?: string) {

@@ -12,22 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = __importDefault(require("./app"));
-const connect_1 = __importDefault(require("./db/connect"));
-// environment variables
-const PORT = process.env.PORT || 5500;
-// create web server
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // connection with MongoDB's database
-        yield (0, connect_1.default)();
-        // open the server in the PORT
-        app_1.default.listen(PORT, () => {
-            console.log(`[server]: Server is running at http://localhost:${PORT}`);
+// repository
+const portfolio_1 = __importDefault(require("../../repository/portfolio"));
+class PortfolioController {
+    static get(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield portfolio_1.default.get();
+                res.status(200).send(response);
+            }
+            catch (e) {
+                res.status(404).send({ message: "error 404", err: e });
+            }
         });
     }
-    catch (e) {
-        console.log(e);
-    }
-});
-main();
+}
+exports.default = PortfolioController;

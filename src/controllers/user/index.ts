@@ -1,13 +1,15 @@
 // express
 import { Request, Response } from "express";
+import generateToken from "../../auth/generateToken";
 
 // repository
-import UserRepository from "../repository/user";
+import UserRepository from "../../repository/user";
 
 // type
-import { FindUserParams } from "../shared-type/user";
+import { FindUserParams, UserFrontEnd, UserMongoose } from "../../shared-type/user";
 
 export default class UserController{
+    // register a new user and sign in
     static async register(req: Request, res: Response) {
         
         if(!req.body) return res.status(400).send({ message: "Error 400: bad request you've send a empety data" });
@@ -44,7 +46,9 @@ export default class UserController{
             
             const data = await UserRepository.register(newUser);
 
-            res.status(201).send(data);
+            const token = generateToken(data._id.toString());
+
+            res.status(201).json(token);
 
         }catch(e) {
             

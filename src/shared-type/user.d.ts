@@ -1,4 +1,5 @@
 export type UserMongoose = {
+
     username: string;
     password?: string | undefined;
     email?: string | undefined;

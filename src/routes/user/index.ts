@@ -2,7 +2,7 @@
 import express from "express";
 
 // controller
-import UserController from "../controllers/user";
+import UserController from "../../controllers/user";
 
 // types
 import { Router } from "express";

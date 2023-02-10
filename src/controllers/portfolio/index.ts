@@ -1,5 +1,5 @@
 // repository
-import PortfolioRepository from "../repository/portfolio";
+import PortfolioRepository from "../../repository/portfolio";
 
 // types
 import { Request, Response } from "express";

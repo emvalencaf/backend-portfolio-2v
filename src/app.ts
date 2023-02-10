@@ -13,14 +13,15 @@ const app:Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
-// custom routes
-import { UserRouter } from "./routes/user";
+// custom router
+import { Router } from "./routes";
 
 // routes
 app.get("/", (req: Request, res: Response) => {
     res.send("Express + TypeScript Server")
 });
 
-app.use("/user", UserRouter);
+app.use(Router);
+
 
 export default app;

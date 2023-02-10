@@ -1,10 +1,10 @@
-import UserModel from "../models/user";
+import UserModel from "../../models/user";
 
 // types
-import { FindUserParams, UserFrontEnd } from "../shared-type/user";
+import { FindUserParams, UserFrontEnd } from "../../shared-type/user";
 
 // utils
-import UserUtils from "../utils/user";
+import UserUtils from "../../utils/user";
 
 export default class UserRepository{
     static register(data:UserFrontEnd) {
@@ -27,7 +27,7 @@ export default class UserRepository{
         _id}: FindUserParams 
         ) {
             if (_id) {
-                const user = await UserModel.findById(_id)
+                const user = await UserModel.findById(_id);
                 
                 return UserUtils.removePassword(user);
             }
