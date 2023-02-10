@@ -14,4 +14,4 @@ exports.UserRouter = router;
 router.post("/register", user_1.default.register);
 // params router
 router.route("/:id")
-    .get(user_1.default.findUserById);
+    .get(user_1.default.getById);

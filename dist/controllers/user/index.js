@@ -15,12 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const generateToken_1 = __importDefault(require("../../auth/generateToken"));
 // repository
 const user_1 = __importDefault(require("../../repository/user"));
+// type
 class UserController {
     // register a new user and sign in
     static register(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!req.body)
-                return res.status(400).send({ message: "Error 400: bad request you've send a empety data" });
+                return res.status(400).send({ message: "Error 400: bad request you've sent a empety data" });
             const { username, password, email } = req.body;
             if (!username ||
                 !password ||
@@ -32,13 +33,20 @@ class UserController {
                 return res.status(400).send({
                     message: "Error 400: bad request you've send a invality email"
                 });
-            if (yield UserController.findOneUser(null, null, { email: email }))
+            //if (await UserController.findOneUser(null, null, { email: email })) return res.status(409).send({
+            //    message:"Error 409: the email sent already is registered"
+            //});
+            // if (await UserController.findOneUser(null, null, { username: username })) return res.status(409).send({
+            //    message:"Error 409: the username sent already is registered"
+            // });
+            const userFind = yield UserController.findUser({
+                email,
+                username,
+            });
+            console.log(userFind);
+            if (!!userFind)
                 return res.status(409).send({
-                    message: "Error 409: the email sent already is registered"
-                });
-            if (yield UserController.findOneUser(null, null, { username: username }))
-                return res.status(409).send({
-                    message: "Error 409: the username sent already is registered"
+                    message: "Error 409: the email or username sent already is registered"
                 });
             const newUser = {
                 username: username.toString(),
@@ -47,51 +55,54 @@ class UserController {
             };
             try {
                 const data = yield user_1.default.register(newUser);
-                const token = (0, generateToken_1.default)(data._id.toString());
-                res.status(201).json(token);
+                if (data) {
+                    const token = (0, generateToken_1.default)(data._id.toString());
+                    res.status(201).json(token);
+                }
+                ;
             }
             catch (e) {
                 res.status(500).send({
                     message: "error 500: internal error in our server"
                 });
-                console.log("[Servidor]: Error 500", e);
+                console.log("[server]: Error 500", e);
             }
         });
     }
     ;
-    static findUserById(req, res) {
+    static getById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            return UserController.findOneUser(req, res, {
-                email: undefined,
-                username: undefined,
-                _id: undefined
-            });
+            if (req.params.id)
+                res.status(400).send({
+                    message: "error 400: bad request you must sent an id"
+                });
+            if (!req.params.id.match(/^[a-fA-F0-9]{24}$/))
+                res.status(500).send({
+                    message: "error 400: bad request you must sent a valid id"
+                });
+            try {
+                return yield user_1.default.getById(req.params.id);
+            }
+            catch (err) {
+                console.log(`[server]: user's id ${req.params.id} not found it`);
+                res.status(404).send({
+                    message: "error 404: user not found it",
+                });
+            }
         });
     }
-    static findOneUser(req, res, { email, username, _id }) {
+    static findUser({ email, username }) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (req && res) {
-                const data = yield user_1.default.findOneUser({
-                    _id: req.params.id,
-                    email: req.params.email,
-                    username: req.params.username,
+            try {
+                return yield user_1.default.findUser({
+                    email,
+                    username
                 });
-                if (!data)
-                    return res === null || res === void 0 ? void 0 : res.status(404).send({
-                        message: "error 404: not found"
-                    });
-                return res.status(200).send(data);
             }
-            ;
-            if (!email ||
-                !username ||
-                !_id)
-                return;
-            return yield user_1.default.findOneUser({
-                email,
-                username,
-                _id,
-            });
+            catch (err) {
+                console.log("[server]: error:", err);
+                return null;
+            }
         });
     }
 }

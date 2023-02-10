@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+mongoose.set("strictQuery", false);
+
 // enviroment variables
     // url
 const mongoDBURL = process.env.DB_URL || "";

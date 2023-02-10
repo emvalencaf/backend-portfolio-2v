@@ -16,5 +16,4 @@ export type UserFrontEnd = {
 export type FindUserParams = {
     username?: string;
     email?: string;
-    _id?: string;
 };

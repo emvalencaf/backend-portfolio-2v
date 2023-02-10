@@ -14,6 +14,6 @@ router.post("/register", UserController.register);
 
 // params router
 router.route("/:id")
-    .get(UserController.findUserById);
+    .get(UserController.getById);
 
 export { router as UserRouter };

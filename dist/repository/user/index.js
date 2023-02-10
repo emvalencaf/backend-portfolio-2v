@@ -12,38 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const user_1 = __importDefault(require("../../models/user"));
 // utils
-const user_2 = __importDefault(require("../../utils/user"));
 class UserRepository {
-    static register(data) {
-        const { username, password, email } = data;
-        const newData = {
-            username,
-            password,
-            email
-        };
-        return user_1.default.create(newData);
-    }
-    static findOneUser({ email, username, _id }) {
+    static register(userData) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (_id) {
-                const user = yield user_1.default.findById(_id);
-                return user_2.default.removePassword(user);
+            // Generate password hash
+            try {
+                const salt = yield bcryptjs_1.default.genSalt();
+                const passwordHash = yield bcryptjs_1.default.hash(userData.password || '', salt);
+                userData.password = passwordHash;
+                return user_1.default.create(userData);
             }
-            if (email) {
-                const user = yield user_1.default.findOne({
-                    email: email
-                }).exec();
-                return user_2.default.removePassword(user);
-            }
-            if (username) {
-                const user = yield user_1.default.findOne({
-                    username: username
-                }).exec();
-                return user_2.default.removePassword(user);
+            catch (err) {
+                console.log(`[server]: `, err);
             }
         });
+    }
+    static getById(id) {
+        return user_1.default.findById(id).select('-password');
+    }
+    static findUser({ email, username }) {
+        if (email)
+            return user_1.default.findOne({ email }).select("-password").exec();
+        if (username)
+            return user_1.default.findOne({ username }).select("-password").exec();
     }
 }
 exports.default = UserRepository;

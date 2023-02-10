@@ -4,15 +4,15 @@ import generateToken from "../../auth/generateToken";
 
 // repository
 import UserRepository from "../../repository/user";
+import { FindUserParams } from "../../shared-type/user";
 
 // type
-import { FindUserParams, UserFrontEnd, UserMongoose } from "../../shared-type/user";
 
 export default class UserController{
     // register a new user and sign in
     static async register(req: Request, res: Response) {
-        
-        if(!req.body) return res.status(400).send({ message: "Error 400: bad request you've send a empety data" });
+      
+        if(!req.body) return res.status(400).send({ message: "Error 400: bad request you've sent a empety data" });
 
         const { username, password, email } = req.body;
 
@@ -28,12 +28,23 @@ export default class UserController{
             message: "Error 400: bad request you've send a invality email"
         });
 
-        if (await UserController.findOneUser(null, null, { email: email })) return res.status(409).send({
-            message:"Error 409: the email sent already is registered"
+        //if (await UserController.findOneUser(null, null, { email: email })) return res.status(409).send({
+        //    message:"Error 409: the email sent already is registered"
+        //});
+
+        // if (await UserController.findOneUser(null, null, { username: username })) return res.status(409).send({
+        //    message:"Error 409: the username sent already is registered"
+        // });
+
+        const userFind = await UserController.findUser({
+            email,
+            username,
         });
 
-        if (await UserController.findOneUser(null, null, { username: username })) return res.status(409).send({
-            message:"Error 409: the username sent already is registered"
+        console.log(userFind);
+        
+        if (!!userFind) return res.status(409).send({
+            message: "Error 409: the email or username sent already is registered"
         });
 
         const newUser = {
@@ -46,9 +57,11 @@ export default class UserController{
             
             const data = await UserRepository.register(newUser);
 
-            const token = generateToken(data._id.toString());
+            if (data) {
 
-            res.status(201).json(token);
+                const token = generateToken(data._id.toString());
+                res.status(201).json(token);
+            };
 
         }catch(e) {
             
@@ -56,47 +69,52 @@ export default class UserController{
                 message:"error 500: internal error in our server"
             });
 
-            console.log("[Servidor]: Error 500", e);
+            console.log("[server]: Error 500", e);
         }
 
     };
 
-    static async findUserById(req: Request, res: Response) {
-        return UserController.findOneUser(req, res, {
-            email: undefined,
-            username: undefined,
-            _id: undefined
+    static async getById(req: Request, res: Response) {
+
+        if (req.params.id) res.status(400).send({
+            message: "error 400: bad request you must sent an id"
         });
+
+        if (!req.params.id.match(
+            /^[a-fA-F0-9]{24}$/
+            )) res.status(500).send({
+                message:"error 400: bad request you must sent a valid id"
+            })
+
+        try {
+
+            return await UserRepository.getById(req.params.id);
+
+        }catch(err) {
+            
+            console.log(`[server]: user's id ${req.params.id} not found it`);
+
+            res.status(404).send({
+                message: "error 404: user not found it",
+            });
+        }
+
     }
 
-    static async findOneUser(req: Request | null, res: Response | null,{ email, username, _id }: FindUserParams) {
+    static async findUser({ email, username }: FindUserParams) {
 
-        if (req && res) {
-
-            const data = await UserRepository.findOneUser({
-                _id: req.params.id,
-                email: req.params.email,
-                username: req.params.username,
+        try {
+            
+            return await UserRepository.findUser({
+                email,
+                username
             });
 
-            if (!data) return res?.status(404).send({
-                message: "error 404: not found"
-            });
-
-            return res.status(200).send(data);
-
-        };
-
-        if (
-            !email ||
-            !username ||
-            !_id !!
-        ) return;
-
-        return await UserRepository.findOneUser({
-            email,
-            username,
-            _id,
-        });
+        } catch(err) {
+            
+            console.log("[server]: error:", err);
+            
+            return null;
+        }
     }
 }
