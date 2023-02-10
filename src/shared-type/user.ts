@@ -1,6 +1,6 @@
 export type UserMongoose = {
 
-    username: string;
+    name: string;
     password?: string | undefined;
     email?: string | undefined;
     createdAt: Date;
@@ -8,12 +8,13 @@ export type UserMongoose = {
 };
 
 export type UserFrontEnd = {
-    username: string;
-    password?: string;
-    email?: string;
+    id: string;
+    name: string;
+    email: string;
+    jwt?: string;
 }
 
 export type FindUserParams = {
-    username?: string;
+    name?: string;
     email?: string;
 };

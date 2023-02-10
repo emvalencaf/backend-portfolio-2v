@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const generateToken_1 = __importDefault(require("../../auth/generateToken"));
+// auth
+const auth_1 = __importDefault(require("../../auth"));
 // repository
 const user_1 = __importDefault(require("../../repository/user"));
+const CryptPassword_1 = __importDefault(require("../../utils/CryptPassword"));
 // type
 class UserController {
     // register a new user and sign in
@@ -22,8 +24,8 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             if (!req.body)
                 return res.status(400).send({ message: "Error 400: bad request you've sent a empety data" });
-            const { username, password, email } = req.body;
-            if (!username ||
+            const { name, password, email } = req.body;
+            if (!name ||
                 !password ||
                 !email)
                 return res.status(400).send({
@@ -33,31 +35,29 @@ class UserController {
                 return res.status(400).send({
                     message: "Error 400: bad request you've send a invality email"
                 });
-            //if (await UserController.findOneUser(null, null, { email: email })) return res.status(409).send({
-            //    message:"Error 409: the email sent already is registered"
-            //});
-            // if (await UserController.findOneUser(null, null, { username: username })) return res.status(409).send({
-            //    message:"Error 409: the username sent already is registered"
-            // });
             const userFind = yield UserController.findUser({
                 email,
-                username,
+                name,
             });
-            console.log(userFind);
             if (!!userFind)
                 return res.status(409).send({
                     message: "Error 409: the email or username sent already is registered"
                 });
             const newUser = {
-                username: username.toString(),
+                name: name.toString(),
                 email: email.toString(),
                 password: password.toString(),
             };
             try {
                 const data = yield user_1.default.register(newUser);
                 if (data) {
-                    const token = (0, generateToken_1.default)(data._id.toString());
-                    res.status(201).json(token);
+                    const token = auth_1.default.generateToken(data._id.toString());
+                    res.status(201).json({
+                        id: data._id,
+                        jwt: token,
+                        name: data.name,
+                        email: data.email,
+                    });
                 }
                 ;
             }
@@ -65,20 +65,16 @@ class UserController {
                 res.status(500).send({
                     message: "error 500: internal error in our server"
                 });
-                console.log("[server]: Error 500", e);
             }
         });
     }
     ;
-    static getById(req, res) {
+    // get an user by id
+    static getById(req, res, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (req.params.id)
+            if (!id)
                 res.status(400).send({
                     message: "error 400: bad request you must sent an id"
-                });
-            if (!req.params.id.match(/^[a-fA-F0-9]{24}$/))
-                res.status(500).send({
-                    message: "error 400: bad request you must sent a valid id"
                 });
             try {
                 return yield user_1.default.getById(req.params.id);
@@ -91,13 +87,54 @@ class UserController {
             }
         });
     }
-    static findUser({ email, username }) {
+    // get an user by params id
+    static getByParams(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            return UserController.getById(req, res, id);
+        });
+    }
+    // log in an user
+    static login(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { name, email, password } = req.body;
+            if (!name && !email)
+                return res.status(400).send({
+                    message: "error 400: bad request you must sent an email or name to login an user"
+                });
+            if (!password)
+                return res.status(400).send({
+                    message: "error 400: bad request you must sent an password to login an user"
+                });
+            const user = yield UserController.findUser({ name, email }, true);
+            if (!user)
+                return res.status(404).send({
+                    message: "error 404: there is no user with this name or email"
+                });
+            // compare password
+            if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
+                return res.status(400).send({
+                    message: "error 400: bad request you must send a valid password"
+                });
+            // get token
+            const token = auth_1.default.generateToken(user._id.toString());
+            // return user data
+            res.status(200).json({
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                jwt: token,
+            });
+        });
+    }
+    // find an user by email or name
+    static findUser({ email, name }, showPassword = false) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield user_1.default.findUser({
                     email,
-                    username
-                });
+                    name
+                }, showPassword);
             }
             catch (err) {
                 console.log("[server]: error:", err);

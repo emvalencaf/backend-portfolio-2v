@@ -1,10 +1,13 @@
 // express
 import { Request, Response } from "express";
-import generateToken from "../../auth/generateToken";
+
+// auth
+import Auth from "../../auth";
 
 // repository
 import UserRepository from "../../repository/user";
 import { FindUserParams } from "../../shared-type/user";
+import CryptPassword from "../../utils/CryptPassword";
 
 // type
 
@@ -14,10 +17,10 @@ export default class UserController{
       
         if(!req.body) return res.status(400).send({ message: "Error 400: bad request you've sent a empety data" });
 
-        const { username, password, email } = req.body;
+        const { name, password, email } = req.body;
 
         if (
-            !username ||
+            !name ||
             !password ||
             !email
         ) return res.status(400).send({
@@ -28,27 +31,17 @@ export default class UserController{
             message: "Error 400: bad request you've send a invality email"
         });
 
-        //if (await UserController.findOneUser(null, null, { email: email })) return res.status(409).send({
-        //    message:"Error 409: the email sent already is registered"
-        //});
-
-        // if (await UserController.findOneUser(null, null, { username: username })) return res.status(409).send({
-        //    message:"Error 409: the username sent already is registered"
-        // });
-
         const userFind = await UserController.findUser({
             email,
-            username,
+            name,
         });
 
-        console.log(userFind);
-        
         if (!!userFind) return res.status(409).send({
             message: "Error 409: the email or username sent already is registered"
         });
 
         const newUser = {
-            username: username.toString(),
+            name: name.toString(),
             email: email.toString(),
             password: password.toString(),
         };
@@ -59,8 +52,13 @@ export default class UserController{
 
             if (data) {
 
-                const token = generateToken(data._id.toString());
-                res.status(201).json(token);
+                const token = Auth.generateToken(data._id.toString());
+                res.status(201).json({
+                    id: data._id,
+                    jwt: token,
+                    name: data.name,
+                    email: data.email,
+                });
             };
 
         }catch(e) {
@@ -68,23 +66,14 @@ export default class UserController{
             res.status(500).send({
                 message:"error 500: internal error in our server"
             });
-
-            console.log("[server]: Error 500", e);
         }
-
     };
-
-    static async getById(req: Request, res: Response) {
-
-        if (req.params.id) res.status(400).send({
+    // get an user by id
+    static async getById(req: Request, res: Response, id: string) {
+        
+        if (!id) res.status(400).send({
             message: "error 400: bad request you must sent an id"
         });
-
-        if (!req.params.id.match(
-            /^[a-fA-F0-9]{24}$/
-            )) res.status(500).send({
-                message:"error 400: bad request you must sent a valid id"
-            })
 
         try {
 
@@ -98,17 +87,63 @@ export default class UserController{
                 message: "error 404: user not found it",
             });
         }
+    }
+
+    // get an user by params id
+    static async getByParams(req: Request, res: Response) {
+        
+        const { id } = req.params;
+
+        return UserController.getById(req, res, id);
 
     }
 
-    static async findUser({ email, username }: FindUserParams) {
+    // log in an user
+    static async login(req: Request, res: Response) {
+        
+        const { name, email, password } = req.body;
+
+        if ( !name && !email ) return res.status(400).send({
+            message: "error 400: bad request you must sent an email or name to login an user"
+        });
+
+        if ( !password ) return res.status(400).send({
+            message: "error 400: bad request you must sent an password to login an user"
+        });
+
+        const user = await UserController.findUser({ name, email }, true);
+
+        if (!user) return res.status(404).send({
+            message: "error 404: there is no user with this name or email"
+        });
+
+        // compare password
+        if (! await CryptPassword.comparePassword(password, user.password)) return res.status(400).send({
+            message: "error 400: bad request you must send a valid password"
+        });
+
+        // get token
+        const token = Auth.generateToken(user._id.toString());
+
+        // return user data
+        res.status(200).json({
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            jwt: token,
+        });
+
+    }
+
+    // find an user by email or name
+    static async findUser({ email, name }: FindUserParams, showPassword: boolean = false) {
 
         try {
             
             return await UserRepository.findUser({
                 email,
-                username
-            });
+                name
+            }, showPassword);
 
         } catch(err) {
             

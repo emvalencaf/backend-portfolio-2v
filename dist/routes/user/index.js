@@ -12,6 +12,7 @@ const user_1 = __importDefault(require("../../controllers/user"));
 const router = express_1.default.Router();
 exports.UserRouter = router;
 router.post("/register", user_1.default.register);
+router.post("/login", user_1.default.login);
 // params router
 router.route("/:id")
-    .get(user_1.default.getById);
+    .get(user_1.default.getByParams);

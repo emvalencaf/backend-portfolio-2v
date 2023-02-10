@@ -12,16 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const user_1 = __importDefault(require("../../models/user"));
+const CryptPassword_1 = __importDefault(require("../../utils/CryptPassword"));
 // utils
 class UserRepository {
+    // create an user
     static register(userData) {
         return __awaiter(this, void 0, void 0, function* () {
             // Generate password hash
             try {
-                const salt = yield bcryptjs_1.default.genSalt();
-                const passwordHash = yield bcryptjs_1.default.hash(userData.password || '', salt);
+                const passwordHash = yield CryptPassword_1.default.encryptPassword(userData.password);
                 userData.password = passwordHash;
                 return user_1.default.create(userData);
             }
@@ -30,14 +30,30 @@ class UserRepository {
             }
         });
     }
+    static logIn(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, name, password } = req.body;
+            if (!email && !name)
+                return res.status(400).send({
+                    message: "error 400: bad request you must sent an email or username"
+                });
+            if (!password)
+                return res.status(400).send({
+                    message: "error 400: bad request you must sent a password"
+                });
+        });
+    }
+    // get an user by id
     static getById(id) {
         return user_1.default.findById(id).select('-password');
     }
-    static findUser({ email, username }) {
+    // get an user by name
+    static findUser({ email, name }, showPassword = false) {
         if (email)
-            return user_1.default.findOne({ email }).select("-password").exec();
-        if (username)
-            return user_1.default.findOne({ username }).select("-password").exec();
+            return showPassword ? user_1.default.findOne({ email }) : user_1.default.findOne({ email }).select("-password");
+        if (name)
+            return showPassword ? user_1.default.findOne({ name }) : user_1.default.findOne({ name }).select("-password");
+        return null;
     }
 }
 exports.default = UserRepository;

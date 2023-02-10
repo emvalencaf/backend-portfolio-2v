@@ -13,7 +13,7 @@ type MenuLink = {
 };
 
 type Menu = {
-    menuLinks?: MeuLink[];
+    menuLinks?: MenuLink[];
 };
 
 type LogoLink = {
