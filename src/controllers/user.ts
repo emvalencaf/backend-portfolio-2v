@@ -26,11 +26,11 @@ export default class UserController{
             message: "Error 400: bad request you've send a invality email"
         });
 
-        if (await UserController.findOneUser({ email: email })) return res.status(409).send({
+        if (await UserController.findOneUser(null, null, { email: email })) return res.status(409).send({
             message:"Error 409: the email sent already is registered"
         });
 
-        if (await UserController.findOneUser({ username: username })) return res.status(409).send({
+        if (await UserController.findOneUser(null, null, { username: username })) return res.status(409).send({
             message:"Error 409: the username sent already is registered"
         });
 
@@ -57,13 +57,37 @@ export default class UserController{
 
     };
 
-    static async findOneUser({ email, username, _id }: FindUserParams) {
+    static async findUserById(req: Request, res: Response) {
+        return UserController.findOneUser(req, res, {
+            email: undefined,
+            username: undefined,
+            _id: undefined
+        });
+    }
+
+    static async findOneUser(req: Request | null, res: Response | null,{ email, username, _id }: FindUserParams) {
+
+        if (req && res) {
+
+            const data = await UserRepository.findOneUser({
+                _id: req.params.id,
+                email: req.params.email,
+                username: req.params.username,
+            });
+
+            if (!data) return res?.status(404).send({
+                message: "error 404: not found"
+            });
+
+            return res.status(200).send(data);
+
+        };
 
         if (
             !email ||
             !username ||
             !_id !!
-        ) return null;
+        ) return;
 
         return await UserRepository.findOneUser({
             email,
