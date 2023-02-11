@@ -29,5 +29,5 @@ const projectScheme = new mongoose_1.default.Schema({
     },
     owner: { type: mongoose_1.default.Types.ObjectId, ref: "User" },
 });
-const ModelProject = mongoose_1.default.model("Project", projectScheme);
-exports.default = ModelProject;
+const ProjectModel = mongoose_1.default.model("Project", projectScheme);
+exports.default = ProjectModel;
