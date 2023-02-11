@@ -18,3 +18,9 @@ export type FindUserParams = {
     name?: string;
     email?: string;
 };
+
+export type TokenFrontEnd = {
+    jwt: string;
+    iat: number;
+    exp: number;
+}

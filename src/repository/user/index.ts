@@ -1,10 +1,9 @@
-import bcrypt from 'bcryptjs';
-import UserModel from "../../models/user";
+import UserModel, { IUser } from "../../models/user";
 
 // types
-import { FindUserParams, UserFrontEnd } from "../../shared-type/user";
+import { FindUserParams } from "../../shared-type/user";
 import { Response, Request } from 'express';
-import CryptPassword from '../../utils/CryptPassword';
+
 type UserData = {
     name: string;
     password: string;
@@ -12,6 +11,7 @@ type UserData = {
 };
 
 // utils
+import CryptPassword from '../../utils/CryptPassword';
 
 
 export default class UserRepository {
@@ -32,6 +32,7 @@ export default class UserRepository {
     }
 
 
+    // log in an user
     static async logIn(req: Request, res: Response) {
         
         const { email, name, password } = req.body;
@@ -47,10 +48,29 @@ export default class UserRepository {
 
     }
 
+
+    // update an user
+    static async updateUserData(dataUser: IUser, newData: UserData) {
+
+        const {
+            email,
+            password,
+            name
+        } = newData;
+
+        if (name) dataUser.name = name;
+
+        if (password) dataUser.password = password;
+
+        if (email) dataUser.email = email;
+
+        await dataUser.save();
+    }
+
     // get an user by id
-    static getById(id: string) {
+    static getById(id: string, showPassword: boolean = false) {
     
-        return UserModel.findById(id).select('-password');
+        return showPassword ? UserModel.findById(id) : UserModel.findById(id).select('-password');
     }
 
     // get an user by name
@@ -61,32 +81,4 @@ export default class UserRepository {
 
         return null;
     }
-    /*
-        static async findOneUser({
-            email,
-            username,
-            _id}: FindUserParams 
-            ) {
-                if (_id) {
-                    const user = await UserModel.findById(_id);
-                    
-                    return UserUtils.removePassword(user);
-                }
-    
-                if (email) {
-                    const user = await UserModel.findOne({
-                        email: email
-                    }).exec();
-    
-                    return UserUtils.removePassword(user);
-                }
-    
-                if (username) {
-                    const user = await UserModel.findOne({
-                        username: username
-                    }).exec();
-    
-                    return UserUtils.removePassword(user);
-                }
-        } */
 }

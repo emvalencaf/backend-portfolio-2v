@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
-const CryptPassword_1 = __importDefault(require("../../utils/CryptPassword"));
 // utils
+const CryptPassword_1 = __importDefault(require("../../utils/CryptPassword"));
 class UserRepository {
     // create an user
     static register(userData) {
@@ -30,6 +30,7 @@ class UserRepository {
             }
         });
     }
+    // log in an user
     static logIn(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, name, password } = req.body;
@@ -43,9 +44,22 @@ class UserRepository {
                 });
         });
     }
+    // update an user
+    static updateUserData(dataUser, newData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, password, name } = newData;
+            if (name)
+                dataUser.name = name;
+            if (password)
+                dataUser.password = password;
+            if (email)
+                dataUser.email = email;
+            yield dataUser.save();
+        });
+    }
     // get an user by id
-    static getById(id) {
-        return user_1.default.findById(id).select('-password');
+    static getById(id, showPassword = false) {
+        return showPassword ? user_1.default.findById(id) : user_1.default.findById(id).select('-password');
     }
     // get an user by name
     static findUser({ email, name }, showPassword = false) {

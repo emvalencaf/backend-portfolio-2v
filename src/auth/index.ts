@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 // UserController
 import UserController from "../controllers/user";
@@ -7,6 +7,13 @@ import UserController from "../controllers/user";
 // enviroment variables
 const jwtSecret = process.env.JWT_SECRET || "";
 
+
+// type
+type Verified = {
+    id: string;
+    iat: number;
+    exp: number;
+} | JwtPayload;
 
 export default class Auth{
     // get a token by an id
@@ -23,7 +30,11 @@ export default class Auth{
     // get an id or empety string from a token
     static verifyToken(token: string) {
 
-        return jwt.verify(token, jwtSecret);
+        const verified = jwt.verify(token, jwtSecret);
+        
+        if (typeof verified === "string") return;
+
+        return verified;
 
     }
 
@@ -44,14 +55,20 @@ export default class Auth{
         try {
             const verified = Auth.verifyToken(token);
 
-            if (typeof verified !== "string") throw Error();
+            const user = await UserController.getById(res, verified?.id);
 
-            const user = await UserController.getById(req, res, verified);
+            console.log(user);
 
             req.user = {
                 id: user?._id.toString() || "",
                 name: user?.name || "",
                 email: user?.email || "",
+            };
+
+            req.token = {
+                jwt: token,
+                iat: verified?.iat,
+                exp: verified?.exp,
             };
 
             next();

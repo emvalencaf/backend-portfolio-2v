@@ -19,6 +19,68 @@ const user_1 = __importDefault(require("../../repository/user"));
 const CryptPassword_1 = __importDefault(require("../../utils/CryptPassword"));
 // type
 class UserController {
+    // get current user
+    static getCurrentUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = req.user;
+            const token = req.token;
+            res.status(200).json({
+                user: Object.assign({}, user),
+                token: Object.assign({}, token),
+            });
+        });
+    }
+    static changePassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { newPassword, password, email } = req.body;
+            // frontend data validations
+            if (!newPassword)
+                return res.status(400).send({
+                    message: "error 400: bad request you must sent a new password"
+                });
+            if (!password)
+                return res.status(400).send({
+                    message: "error 400: bad request you must sent the currently password"
+                });
+            if (!req.user)
+                return res.status(403).send({
+                    message: "error 403: forbidden access you must be logged to change your password"
+                });
+            if (req.user.email !== email)
+                return res.status(403).send({
+                    message: "error 403: forbidden access you can not changed a password of another account"
+                });
+            // get user's data by the authGuard
+            const { id } = req.user;
+            const user = yield UserController.getById(res, id, true);
+            if (!user)
+                return res.status(404).send({
+                    message: "error 404: user not found"
+                });
+            console.log(user);
+            // check password
+            if (!(yield CryptPassword_1.default.comparePassword(password, user === null || user === void 0 ? void 0 : user.password)))
+                return res.status(400).send({
+                    message: "error 400: bad request you must confirm your currently password"
+                });
+            try {
+                yield user_1.default.updateUserData(user, {
+                    email: "",
+                    password: newPassword,
+                    name: "",
+                });
+                res.status(200).send({
+                    message: "a new user password was successfully saved"
+                });
+            }
+            catch (err) {
+                console.log(`[server]: error`, err);
+                res.status(500).send({
+                    message: "error 500: internal error"
+                });
+            }
+        });
+    }
     // register a new user and sign in
     static register(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -70,17 +132,17 @@ class UserController {
     }
     ;
     // get an user by id
-    static getById(req, res, id) {
+    static getById(res, id, showPassword = false) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!id)
                 res.status(400).send({
                     message: "error 400: bad request you must sent an id"
                 });
             try {
-                return yield user_1.default.getById(req.params.id);
+                return yield user_1.default.getById(id, showPassword);
             }
             catch (err) {
-                console.log(`[server]: user's id ${req.params.id} not found it`);
+                console.log(`[server]: user's id ${id} not found it`);
                 res.status(404).send({
                     message: "error 404: user not found it",
                 });
@@ -91,7 +153,7 @@ class UserController {
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            return UserController.getById(req, res, id);
+            return UserController.getById(res, id);
         });
     }
     // log in an user
@@ -114,7 +176,7 @@ class UserController {
             // compare password
             if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
                 return res.status(400).send({
-                    message: "error 400: bad request you must send a valid password"
+                    message: "error 400: bad request you must sent a valid password"
                 });
             // get token
             const token = auth_1.default.generateToken(user._id.toString());

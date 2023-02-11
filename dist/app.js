@@ -8,7 +8,10 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+// middlewars
+// config JSON
 app.use(express_1.default.json());
+// config FormData
 app.use(express_1.default.urlencoded({ extended: true }));
 // custom router
 const routes_1 = require("./routes");

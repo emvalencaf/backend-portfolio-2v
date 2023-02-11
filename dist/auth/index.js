@@ -26,7 +26,10 @@ class Auth {
     }
     // get an id or empety string from a token
     static verifyToken(token) {
-        return jsonwebtoken_1.default.verify(token, jwtSecret);
+        const verified = jsonwebtoken_1.default.verify(token, jwtSecret);
+        if (typeof verified === "string")
+            return;
+        return verified;
     }
     // verifies a token and 
     static authGuard(req, res, next) {
@@ -42,13 +45,17 @@ class Auth {
             // check if token is valid
             try {
                 const verified = Auth.verifyToken(token);
-                if (typeof verified !== "string")
-                    throw Error();
-                const user = yield user_1.default.getById(req, res, verified);
+                const user = yield user_1.default.getById(res, verified === null || verified === void 0 ? void 0 : verified.id);
+                console.log(user);
                 req.user = {
                     id: (user === null || user === void 0 ? void 0 : user._id.toString()) || "",
                     name: (user === null || user === void 0 ? void 0 : user.name) || "",
                     email: (user === null || user === void 0 ? void 0 : user.email) || "",
+                };
+                req.token = {
+                    jwt: token,
+                    iat: verified === null || verified === void 0 ? void 0 : verified.iat,
+                    exp: verified === null || verified === void 0 ? void 0 : verified.exp,
                 };
                 next();
             }

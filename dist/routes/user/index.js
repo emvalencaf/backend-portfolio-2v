@@ -8,11 +8,15 @@ exports.UserRouter = void 0;
 const express_1 = __importDefault(require("express"));
 // controller
 const user_1 = __importDefault(require("../../controllers/user"));
+// middleware 
+const auth_1 = __importDefault(require("../../auth"));
 // router
 const router = express_1.default.Router();
 exports.UserRouter = router;
+// routes
 router.post("/register", user_1.default.register);
 router.post("/login", user_1.default.login);
-// params router
-router.route("/:id")
-    .get(user_1.default.getByParams);
+router.get("/me", auth_1.default.authGuard, user_1.default.getCurrentUser);
+router.patch("/change-password", auth_1.default.authGuard, user_1.default.changePassword);
+// params routes
+router.get("/:id", user_1.default.getByParams);

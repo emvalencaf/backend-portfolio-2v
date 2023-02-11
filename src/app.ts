@@ -10,7 +10,11 @@ dotenv.config();
 
 const app:Express = express();
 
+
+// middlewars
+    // config JSON
 app.use(express.json());
+    // config FormData
 app.use(express.urlencoded({ extended: true}));
 
 // custom router
