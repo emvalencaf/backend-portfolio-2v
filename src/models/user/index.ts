@@ -8,6 +8,7 @@ export interface IUser extends Document{
     createdAt: Date;
     updatedAt: Date | null | undefined;
     _id: ObjectId;
+    projects: ObjectId[];
 }
 
 const userScheme = new mongoose.Schema<IUser>({
@@ -37,7 +38,13 @@ const userScheme = new mongoose.Schema<IUser>({
     updatedAt: {
         type: Date,
         reuqired: false,
-    }
+    },
+    projects: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Project",
+        }
+    ]
 });
 
 const PortfolioModel = mongoose.model("User", userScheme);

@@ -4,6 +4,9 @@ import PortfolioRepository from "../../repository/portfolio";
 // types
 import { Request, Response } from "express";
 
+// controllers
+import SettingsController from "../settings";
+
 export default class PortfolioController {
     static async get(req:Request, res:Response) {
         try{
@@ -15,5 +18,10 @@ export default class PortfolioController {
         } catch(e) {
             res.status(404).send({message: "error 404", err: e});
         }
+    }
+
+    static async createSettings(req: Request, res: Response) {
+
+        return await SettingsController.create(req, res);
     }
 }

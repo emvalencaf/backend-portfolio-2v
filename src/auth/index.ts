@@ -57,8 +57,6 @@ export default class Auth{
 
             const user = await UserController.getById(res, verified?.id);
 
-            console.log(user);
-
             req.user = {
                 id: user?._id.toString() || "",
                 name: user?.name || "",

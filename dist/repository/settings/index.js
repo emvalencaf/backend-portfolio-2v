@@ -12,26 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// repository
-const portfolio_1 = __importDefault(require("../../repository/portfolio"));
-// controllers
-const settings_1 = __importDefault(require("../settings"));
-class PortfolioController {
-    static get(req, res) {
+const settings_1 = __importDefault(require("../../models/settings"));
+class SettingsRepository {
+    static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const response = yield portfolio_1.default.get();
-                res.status(200).send(response);
-            }
-            catch (e) {
-                res.status(404).send({ message: "error 404", err: e });
-            }
-        });
-    }
-    static createSettings(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield settings_1.default.create(req, res);
+            return settings_1.default.create(data);
         });
     }
 }
-exports.default = PortfolioController;
+exports.default = SettingsRepository;

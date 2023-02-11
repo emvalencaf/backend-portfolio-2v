@@ -31,7 +31,13 @@ const userScheme = new mongoose_1.default.Schema({
     updatedAt: {
         type: Date,
         reuqired: false,
-    }
+    },
+    projects: [
+        {
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: "Project",
+        }
+    ]
 });
 const PortfolioModel = mongoose_1.default.model("User", userScheme);
 exports.default = PortfolioModel;
