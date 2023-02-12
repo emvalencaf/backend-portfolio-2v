@@ -111,7 +111,7 @@ class ProjectController {
     // get projects or project by params
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id, mainLang, title, userId } = req.params;
+            const { id = "", mainLang = "", title = "", userId = "" } = req.params;
             if (id)
                 return yield ProjectController.getById(res, id);
             if (mainLang || title || userId)
@@ -143,8 +143,12 @@ class ProjectController {
         });
     }
     // find projects by params
-    static findProjectsByParams(res, { mainLang, title, userId, }) {
+    static findProjectsByParams(res, { mainLang = "", title = "", userId = "", }) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mainLang || !title || !userId)
+                res.status(400).send({
+                    message: "error 400: bad request you must fill the params"
+                });
             try {
                 const projects = yield project_1.default.findProjectsByParams({
                     mainLang,

@@ -16,7 +16,17 @@ const settings_1 = __importDefault(require("../../models/settings"));
 class SettingsRepository {
     static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return settings_1.default.create(data);
+            return yield settings_1.default.create(data);
+        });
+    }
+    static find() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield settings_1.default.find({});
+        });
+    }
+    static getById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield settings_1.default.findById(id);
         });
     }
 }

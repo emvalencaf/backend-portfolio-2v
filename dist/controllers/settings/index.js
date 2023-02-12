@@ -87,5 +87,29 @@ class SettingsController {
             res.status(200).send(newData);
         });
     }
+    static getAllSettings(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const settings = yield settings_1.default.find();
+                res.status(200).send(settings);
+            }
+            catch (err) {
+                console.log(`[server]: error ${err}`);
+                res.status(500).send({
+                    message: "error 500: internal error"
+                });
+            }
+        });
+    }
+    static getById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield settings_1.default.getById(id);
+            }
+            catch (err) {
+                console.log("[server]: error ", err);
+            }
+        });
+    }
 }
 exports.default = SettingsController;

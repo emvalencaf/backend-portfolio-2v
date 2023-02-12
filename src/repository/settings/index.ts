@@ -23,7 +23,19 @@ type CreateData = {
 export default class SettingsRepository {
     static async create(data:CreateData){
 
-        return SettingsModel.create(data);
+        return await SettingsModel.create(data);
 
+    }
+
+    static async find(){
+
+        return await SettingsModel.find({});
+
+    }
+
+    static async getById(id: string){
+
+        return await SettingsModel.findById(id);
+        
     }
 }

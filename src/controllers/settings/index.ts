@@ -93,4 +93,32 @@ export default class SettingsController {
         res.status(200).send(newData);
 
     }
+
+    static async getAllSettings(req: Request, res: Response) {
+
+        try{
+
+            const settings = await SettingsRepository.find();
+
+            res.status(200).send(settings);
+
+        } catch(err){
+            console.log(`[server]: error ${err}`);
+
+            res.status(500).send({
+                message: "error 500: internal error"
+            });
+        }
+
+    }
+
+    static async getById(id: string) {
+        try{
+
+            return await SettingsRepository.getById(id);
+
+        } catch(err) {
+            console.log("[server]: error ", err);
+        }
+    }
 }

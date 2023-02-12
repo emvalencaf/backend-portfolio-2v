@@ -19,9 +19,4 @@ export default class PortfolioController {
             res.status(404).send({message: "error 404", err: e});
         }
     }
-
-    static async createSettings(req: Request, res: Response) {
-
-        return await SettingsController.create(req, res);
-    }
 }

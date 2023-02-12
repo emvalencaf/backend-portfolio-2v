@@ -121,7 +121,7 @@ export default class ProjectController {
 
     // get projects or project by params
     static async getByParams(req: Request, res: Response) {
-        const { id, mainLang, title, userId } = req.params;
+        const { id = "", mainLang = "", title = "", userId = "" } = req.params;
 
         if (id) return await ProjectController.getById(res, id);
 
@@ -158,7 +158,11 @@ export default class ProjectController {
     }
 
     // find projects by params
-    static async findProjectsByParams(res: Response, { mainLang, title, userId, }: FindProjectsByParams) {
+    static async findProjectsByParams(res: Response, { mainLang = "", title = "", userId = "", }: FindProjectsByParams) {
+
+        if (!mainLang || !title || !userId) res.status(400).send({
+            message: "error 400: bad request you must fill the params"
+        })
 
         try{
             
