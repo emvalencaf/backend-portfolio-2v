@@ -7,6 +7,7 @@ import ProjectRepository from "../../repository/project/project";
 // types
 import { Request, Response } from "express";
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 export type FindProjectsByParams = {
     mainLang?: string;
     title?: string;
@@ -90,9 +91,10 @@ export default class ProjectController {
 
             const project = await ProjectRepository.create(data);
             
-            if (!project) {
-                owner.projects.push(project);
-                owner.save();
+            if (project) {
+                owner.projects.push(project._id.toString());
+                await owner.save();
+                console.log(owner.projects);
             };
 
             res.status(201).send({

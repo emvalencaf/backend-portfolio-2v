@@ -83,9 +83,10 @@ class ProjectController {
                     urlRepository,
                 };
                 const project = yield project_1.default.create(data);
-                if (!project) {
-                    owner.projects.push(project);
-                    owner.save();
+                if (project) {
+                    owner.projects.push(project._id.toString());
+                    yield owner.save();
+                    console.log(owner.projects);
                 }
                 ;
                 res.status(201).send({

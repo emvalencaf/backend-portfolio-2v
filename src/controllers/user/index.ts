@@ -186,9 +186,13 @@ export default class UserController{
 
         const user = await UserController.getById(res, id, false);
 
-        
+        if (!user) return false;
 
+        const { projects } = user;
 
+        res.status(200).send({
+            projects,
+        })
     };
 
     // log in an user

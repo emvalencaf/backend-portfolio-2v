@@ -166,6 +166,12 @@ class UserController {
                 });
             const { id } = req.user;
             const user = yield UserController.getById(res, id, false);
+            if (!user)
+                return false;
+            const { projects } = user;
+            res.status(200).send({
+                projects,
+            });
         });
     }
     ;

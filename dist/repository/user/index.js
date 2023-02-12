@@ -59,7 +59,7 @@ class UserRepository {
     }
     // get an user by id
     static getById(id, showPassword = false) {
-        return showPassword ? user_1.default.findById(id) : user_1.default.findById(id).select('-password');
+        return showPassword ? user_1.default.findById(id).populate("projects") : user_1.default.findById(id).select('-password').populate("projects");
     }
     // get an user by name
     static findUser({ email, name }, showPassword = false) {
