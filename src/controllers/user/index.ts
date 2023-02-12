@@ -30,6 +30,7 @@ export default class UserController{
 
     }
 
+    // change password of an user
     static async changePassword(req: Request, res: Response) {
 
         const { newPassword, password, email } = req.body;
@@ -59,9 +60,9 @@ export default class UserController{
         if (!user) return res.status(404).send({
             message: "error 404: user not found"
         });
-        console.log(user);
+        
         // check password
-        if (! await CryptPassword.comparePassword(password, user?.password)) return res.status(400).send({
+        if (! await CryptPassword.comparePassword(password, user.password)) return res.status(400).send({
             message: "error 400: bad request you must confirm your currently password"
         });
 

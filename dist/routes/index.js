@@ -6,15 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Router = void 0;
 // modules
 const express_1 = __importDefault(require("express"));
-const portfolio_1 = require("./portfolio");
-const user_1 = require("./user");
-// router
+// routers
 const router = (0, express_1.default)();
 exports.Router = router;
+const portfolio_1 = require("./portfolio");
+const project_1 = require("./project");
+const user_1 = require("./user");
 // user routes
 router.use("/api/users", user_1.UserRouter);
 // portfolio routes
 router.use("/api/portfolio", portfolio_1.PortfolioRouter);
+// project routes
+router.use("/api/projects", project_1.ProjectRouter);
 // test route
 router.get("/api", (req, res) => {
     res.send("API working!!");

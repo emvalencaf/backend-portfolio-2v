@@ -12,14 +12,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// model
 const project_1 = __importDefault(require("../../models/project"));
 class ProjectRepository {
     static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            data.owner.projects.push();
-            const project = yield project_1.default.create(data);
-            return project;
+            return yield project_1.default.create(data);
+        });
+    }
+    static getById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield project_1.default.findById(id);
+        });
+    }
+    static findProjectsByParams({ mainLang = "", title = "", userId = "" }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (title)
+                return yield project_1.default.findOne({
+                    title: title
+                });
+            if (mainLang)
+                return yield project_1.default.find({
+                    mainLang: mainLang
+                });
+            if (userId)
+                return yield project_1.default.find({
+                    owner: userId
+                });
+            return null;
+        });
+    }
+    static find() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield project_1.default.find();
         });
     }
 }

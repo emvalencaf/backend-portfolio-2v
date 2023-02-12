@@ -6,9 +6,15 @@ import ProjectRepository from "../../repository/project/project";
 
 // types
 import { Request, Response } from "express";
+export type FindProjectsByParams = {
+    mainLang?: string;
+    title?: string;
+    userId?: string
+};
 
 export default class ProjectController {
 
+    // create a new project
     static async create(req: Request, res: Response) {
 
         const { title, resume, description, mainLang, srcImg, urlDemo, urlRepository } = req.body;
@@ -77,7 +83,11 @@ export default class ProjectController {
                 urlRepository,
             }
 
-            return await ProjectRepository.create(data);
+            const project = await ProjectRepository.create(data);
+
+            res.status(201).send({
+                project,
+            });
 
         } catch (err) {
             console.log(`[server]: error`, err);
@@ -87,16 +97,91 @@ export default class ProjectController {
             });
         }
 
+    }
 
-        /*
-        title: string;
-        resume: string;
-        description: string;
-        mainLang: "javascript" | "typescript" | "html" | "css" | "python" | "java" | "csharp" | "php" | "cplus";
-        srcImg?: string;
-        urlDemo: string;
-        urlRepository: string;*/
+    // get all projects
+    static async getAllProjects(req: Request, res: Response) {
+
+        try{
+
+            const projects = await ProjectRepository.find();
+
+            res.status(200).send(projects);
+
+        }catch (err) {
+            
+            console.log(`[server]: error `, err);
+            
+            res.status(500).send({
+                message: "error 500: internal error"
+            });
+        }
 
     }
 
+    // get projects or project by params
+    static async getByParams(req: Request, res: Response) {
+        const { id, mainLang, title, userId } = req.params;
+
+        if (id) return await ProjectController.getById(res, id);
+
+        if ( mainLang || title || userId ) return await ProjectController.findProjectsByParams(res, {
+            mainLang,
+            title,
+            userId,
+        });
+
+        res.status(400).send({
+            message: "error 400: bad request you must fill the param"
+        })
+
+    }
+
+    // get a project by id
+    static async getById(res: Response, id: string) {
+
+        try{
+
+            const project = await ProjectRepository.getById(id);
+
+            res.status(200).send({
+                project,
+            });
+
+        }catch (err) {
+            console.log(`[server]: error : ${err}`);
+            res.status(404).send({
+                message: `error 404: project not find`
+            })
+        }
+        
+    }
+
+    // find projects by params
+    static async findProjectsByParams(res: Response, { mainLang, title, userId, }: FindProjectsByParams) {
+
+        try{
+            
+            const projects = await ProjectRepository.findProjectsByParams({
+                mainLang,
+                title,
+                userId
+            });
+
+            if (!projects) res.status(400).send({
+                message: "error 400: bad request you must pass a valida params"
+            });
+
+            res.status(200).send(projects);
+
+        }catch (err){
+            
+            console.log("[server]: error ", err);
+
+            res.status(500).send({
+                message: `error 500: internal error`
+            });
+        }
+
+    }
 }

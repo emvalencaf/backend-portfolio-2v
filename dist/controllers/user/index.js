@@ -30,6 +30,7 @@ class UserController {
             });
         });
     }
+    // change password of an user
     static changePassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { newPassword, password, email } = req.body;
@@ -57,9 +58,8 @@ class UserController {
                 return res.status(404).send({
                     message: "error 404: user not found"
                 });
-            console.log(user);
             // check password
-            if (!(yield CryptPassword_1.default.comparePassword(password, user === null || user === void 0 ? void 0 : user.password)))
+            if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
                 return res.status(400).send({
                     message: "error 400: bad request you must confirm your currently password"
                 });
