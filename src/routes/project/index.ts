@@ -5,11 +5,14 @@ import express from "express";
 import { Router } from "express";
 import Auth from "../../auth";
 import ProjectController from "../../controllers/project";
+import UploadImageMiddleware from "../../middlewares/uploadImage";
 
 // router
 const router: Router = express.Router();
 
 // routes
+    // post route
+router.post("/", Auth.authGuard, UploadImageMiddleware.uploader.single("picture"), ProjectController.create);
     // get routes
 router.get("/", ProjectController.getAllProjects);
 router.get("/:id", ProjectController.getByParams);
@@ -17,7 +20,5 @@ router.get("/mainLangs/:mainLang", ProjectController.getByParams);
 router.get("/users/:user", ProjectController.getByParams);
 router.get("/title/:title", ProjectController.getByParams);
 
-    // post route
-router.post("/", Auth.authGuard, ProjectController.create);
 
 export { router as ProjectRouter };

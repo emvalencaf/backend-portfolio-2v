@@ -20,7 +20,7 @@ class ProjectController {
     // create a new project
     static create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, resume, description, mainLang, srcImg, urlDemo, urlRepository } = req.body;
+            const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
             // user validation
             if (!req.user)
                 return res.status(403).send({
@@ -28,41 +28,43 @@ class ProjectController {
                 });
             // validation
             if (!title)
-                res.status(404).send({
+                return res.status(404).send({
                     message: "error 400: bad request you must fill a title for your project"
                 });
             if (!resume)
-                res.status(400).send({
+                return res.status(400).send({
                     message: "error 400: bad request you must fill a resume of your project"
                 });
             if (!description)
-                res.status(400).send({
+                return res.status(400).send({
                     message: "error 400: bad request you must fill a description of your project"
                 });
             if (!mainLang)
-                res.status(400).send({
+                return res.status(400).send({
                     message: "error 400: bad request you must fill a main language of your project"
                 });
-            if (!srcImg)
-                res.status(400).send({
-                    message: "error 400: bad request you must send a image to display your project"
-                });
             if (!urlDemo)
-                res.status(400).send({
+                return res.status(400).send({
                     message: "error 400: bad request you must fill an url of your project demo"
                 });
             if (!urlRepository)
-                res.status(400).send({
+                return res.status(400).send({
                     message: "error 400: bad request you must fill an url of your project demo"
                 });
             if (resume.length > 250)
-                res.status(400).send({
+                return res.status(400).send({
                     message: "error 400: bad request you must not exceed 250 characters to resume your project"
                 });
             if (resume.length > 50)
-                res.status(400).send({
+                return res.status(400).send({
                     message: "error 400: bad request you must not exceed 50 chracters for your project title"
                 });
+            if (!req.file)
+                return res.status(400).send({
+                    message: "error 400: bad request you must upload at least one photo for your project"
+                });
+            const { path } = req.file;
+            const srcImg = path ? path : "";
             const { id } = req.user;
             const owner = yield user_1.default.getById(res, id, false);
             if (!owner)
@@ -80,6 +82,7 @@ class ProjectController {
                     urlDemo,
                     urlRepository,
                 };
+                console.log(data);
                 const project = yield project_1.default.create(data);
                 res.status(201).send({
                     project,

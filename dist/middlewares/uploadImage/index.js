@@ -27,11 +27,12 @@ UploadImageMiddleware.storage = new multer_storage_cloudinary_1.CloudinaryStorag
         // Upload only png and jpg formats
         if (!file.originalname.match(/\.(png|jpg)$/))
             throw Error("error 400: bad request you can only upload jpg or png images");
+        console.log(req.body);
         // get settings for name the folder
         const { settingsId } = req.body;
         const settings = yield settings_1.default.getById(settingsId);
         if (!settings)
-            throw new Error("error 400: bad request you must selected a portfolio to upload a image");
+            throw new Error("error 400: bad request you must selected a portfolio to upload an image");
         // get user's details
         const { name } = req.user;
         return {
