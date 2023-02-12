@@ -15,10 +15,10 @@ const router: Router = express.Router();
 router.post("/", Auth.authGuard, UploadImageMiddleware.uploader.single("picture"), ProjectController.create);
     // get routes
 router.get("/", ProjectController.getAllProjects);
-router.get("/:id", ProjectController.getByParams);
 router.get("/mainLangs/:mainLang", ProjectController.getByParams);
-router.get("/users/:user", ProjectController.getByParams);
-router.get("/title/:title", ProjectController.getByParams);
+router.get("/users/:userId", ProjectController.getByParams);
+router.get("/titles/:title", ProjectController.getByParams);
+router.get("/:id", ProjectController.getByParams);
 
 
 export { router as ProjectRouter };

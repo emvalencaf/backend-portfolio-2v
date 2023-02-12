@@ -24,6 +24,10 @@ router.patch("/change-password",
     Auth.authGuard,
     UserController.changePassword,
 );
+router.get("/projects",
+    Auth.authGuard,
+    UserController.getProjects
+);
 
 // params routes
 router.get("/:id",

@@ -82,8 +82,12 @@ class ProjectController {
                     urlDemo,
                     urlRepository,
                 };
-                console.log(data);
                 const project = yield project_1.default.create(data);
+                if (!project) {
+                    owner.projects.push(project);
+                    owner.save();
+                }
+                ;
                 res.status(201).send({
                     project,
                 });
@@ -115,6 +119,10 @@ class ProjectController {
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id = "", mainLang = "", title = "", userId = "" } = req.params;
+            console.log("id params: ", id);
+            console.log("mainLang params: ", mainLang);
+            console.log("userId params: ", userId);
+            console.log("title params: ", title);
             if (id)
                 return yield ProjectController.getById(res, id);
             if (mainLang || title || userId)
@@ -148,10 +156,6 @@ class ProjectController {
     // find projects by params
     static findProjectsByParams(res, { mainLang = "", title = "", userId = "", }) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!mainLang || !title || !userId)
-                res.status(400).send({
-                    message: "error 400: bad request you must fill the params"
-                });
             try {
                 const projects = yield project_1.default.findProjectsByParams({
                     mainLang,

@@ -146,9 +146,7 @@ export default class UserController{
     // get an user by id
     static async getById(res: Response, id: string, showPassword: boolean = false) {
         
-        if (!id) res.status(400).send({
-            message: "error 400: bad request you must sent an id"
-        });
+        if (!id) return false;
 
         try {
 
@@ -169,9 +167,29 @@ export default class UserController{
         
         const { id } = req.params;
 
-        return UserController.getById(res, id);
+        const user = await UserController.getById(res, id, false);
+
+        res.status(200).send({
+            user
+        });
 
     }
+
+    // get user projects
+    static async getProjects(req: Request, res: Response) {
+
+        if (!req.user) return res.status(500).send({
+            message: "error 500: internal error"
+        });
+
+        const { id } = req.user;
+
+        const user = await UserController.getById(res, id, false);
+
+        
+
+
+    };
 
     // log in an user
     static async login(req: Request, res: Response) {

@@ -18,5 +18,6 @@ router.post("/register", user_1.default.register);
 router.post("/login", user_1.default.login);
 router.get("/me", auth_1.default.authGuard, user_1.default.getCurrentUser);
 router.patch("/change-password", auth_1.default.authGuard, user_1.default.changePassword);
+router.get("/projects", auth_1.default.authGuard, user_1.default.getProjects);
 // params routes
 router.get("/:id", user_1.default.getByParams);

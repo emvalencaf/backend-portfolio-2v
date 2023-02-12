@@ -57,6 +57,10 @@ export default class Auth{
 
             const user = await UserController.getById(res, verified?.id);
 
+            if (!user) return res.status(404).send({
+                message: "error 404: user not found"
+            });
+
             req.user = {
                 id: user?._id.toString() || "",
                 name: user?.name || "",

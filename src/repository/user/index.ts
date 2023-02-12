@@ -60,7 +60,7 @@ export default class UserRepository {
 
         if (name) dataUser.name = name;
 
-        if (password) dataUser.password = password;
+        if (password) dataUser.password = await CryptPassword.encryptPassword(password);
 
         if (email) dataUser.email = email;
 

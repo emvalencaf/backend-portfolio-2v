@@ -4,7 +4,7 @@ export interface IProject extends Document{
     title: string;
     resume: string;
     description: string;
-    mainLang: "javascript" | "typescript" | "html" | "css" | "python" | "java" | "csharp" | "php" | "cplus";
+    mainLang: string;
     srcImg?: string;
     urlDemo: string;
     urlRepository: string;

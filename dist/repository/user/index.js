@@ -51,7 +51,7 @@ class UserRepository {
             if (name)
                 dataUser.name = name;
             if (password)
-                dataUser.password = password;
+                dataUser.password = yield CryptPassword_1.default.encryptPassword(password);
             if (email)
                 dataUser.email = email;
             yield dataUser.save();

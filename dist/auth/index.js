@@ -46,6 +46,10 @@ class Auth {
             try {
                 const verified = Auth.verifyToken(token);
                 const user = yield user_1.default.getById(res, verified === null || verified === void 0 ? void 0 : verified.id);
+                if (!user)
+                    return res.status(404).send({
+                        message: "error 404: user not found"
+                    });
                 req.user = {
                     id: (user === null || user === void 0 ? void 0 : user._id.toString()) || "",
                     name: (user === null || user === void 0 ? void 0 : user.name) || "",

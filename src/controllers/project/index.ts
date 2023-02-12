@@ -6,6 +6,7 @@ import ProjectRepository from "../../repository/project/project";
 
 // types
 import { Request, Response } from "express";
+import { ObjectId } from "mongodb";
 export type FindProjectsByParams = {
     mainLang?: string;
     title?: string;
@@ -87,9 +88,12 @@ export default class ProjectController {
                 urlRepository,
             }
 
-            console.log(data);
-
             const project = await ProjectRepository.create(data);
+            
+            if (!project) {
+                owner.projects.push(project);
+                owner.save();
+            };
 
             res.status(201).send({
                 project,
@@ -128,7 +132,10 @@ export default class ProjectController {
     // get projects or project by params
     static async getByParams(req: Request, res: Response) {
         const { id = "", mainLang = "", title = "", userId = "" } = req.params;
-
+        console.log("id params: ", id);
+        console.log("mainLang params: ", mainLang);
+        console.log("userId params: ", userId);
+        console.log("title params: ", title);
         if (id) return await ProjectController.getById(res, id);
 
         if ( mainLang || title || userId ) return await ProjectController.findProjectsByParams(res, {
@@ -136,6 +143,7 @@ export default class ProjectController {
             title,
             userId,
         });
+
 
         res.status(400).send({
             message: "error 400: bad request you must fill the param"
@@ -165,10 +173,6 @@ export default class ProjectController {
 
     // find projects by params
     static async findProjectsByParams(res: Response, { mainLang = "", title = "", userId = "", }: FindProjectsByParams) {
-
-        if (!mainLang || !title || !userId) res.status(400).send({
-            message: "error 400: bad request you must fill the params"
-        })
 
         try{
             

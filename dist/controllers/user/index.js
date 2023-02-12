@@ -135,9 +135,7 @@ class UserController {
     static getById(res, id, showPassword = false) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!id)
-                res.status(400).send({
-                    message: "error 400: bad request you must sent an id"
-                });
+                return false;
             try {
                 return yield user_1.default.getById(id, showPassword);
             }
@@ -153,9 +151,24 @@ class UserController {
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            return UserController.getById(res, id);
+            const user = yield UserController.getById(res, id, false);
+            res.status(200).send({
+                user
+            });
         });
     }
+    // get user projects
+    static getProjects(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!req.user)
+                return res.status(500).send({
+                    message: "error 500: internal error"
+                });
+            const { id } = req.user;
+            const user = yield UserController.getById(res, id, false);
+        });
+    }
+    ;
     // log in an user
     static login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

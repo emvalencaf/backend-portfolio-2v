@@ -12,7 +12,7 @@ const app = (0, express_1.default)();
 // config JSON
 app.use(express_1.default.json());
 // config FormData
-app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.urlencoded({ extended: false }));
 // custom router
 const routes_1 = require("./routes");
 // routes

@@ -15,7 +15,6 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const multer_1 = __importDefault(require("multer"));
 const multer_storage_cloudinary_1 = require("multer-storage-cloudinary");
-const settings_1 = __importDefault(require("../../controllers/settings"));
 const cloudinary_1 = __importDefault(require("../../upload/cloudinary"));
 class UploadImageMiddleware {
 }
@@ -24,21 +23,20 @@ _a = UploadImageMiddleware;
 UploadImageMiddleware.storage = new multer_storage_cloudinary_1.CloudinaryStorage({
     cloudinary: cloudinary_1.default.cloudinary,
     params: (req, file) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log(JSON.stringify(req.body));
         // Upload only png and jpg formats
         if (!file.originalname.match(/\.(png|jpg)$/))
             throw Error("error 400: bad request you can only upload jpg or png images");
-        console.log(req.body);
         // get settings for name the folder
-        const { settingsId } = req.body;
-        const settings = yield settings_1.default.getById(settingsId);
-        if (!settings)
-            throw new Error("error 400: bad request you must selected a portfolio to upload an image");
+        // const { settingsId } = req.body;
+        // const settings = await SettingsController.getById(settingsId);
+        // if (!settings) throw new Error("error 400: bad request you must selected a portfolio to upload an image");
         // get user's details
         const { name } = req.user;
         return {
-            folder: `${settings.websiteName}`,
+            folder: `dev`,
             format: file.originalname.split(".")[1],
-            public_id: `${settings.websiteName}/${name}/${file.originalname}`,
+            public_id: `${name}/${file.originalname}`,
         };
     })
 });

@@ -15,7 +15,7 @@ const app:Express = express();
     // config JSON
 app.use(express.json());
     // config FormData
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({ extended: false}));
 
 // custom router
 import { Router } from "./routes";
