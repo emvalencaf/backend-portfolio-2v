@@ -201,9 +201,11 @@ class UserController {
             const token = auth_1.default.generateToken(user._id.toString());
             // return user data
             res.status(200).json({
-                id: user._id,
-                name: user.name,
-                email: user.email,
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                },
                 jwt: token,
             });
         });

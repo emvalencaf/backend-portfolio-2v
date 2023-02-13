@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import { ISettings } from "../../models/settings";
 import SettingsRepository from "../../repository/settings";
 import UserController from "../user";
+type Logo = Pick<ISettings, "logo">;
+type Menu = Pick<ISettings, "menu">;
 
 export default class SettingsController {
     static async create(req: Request, res: Response) {

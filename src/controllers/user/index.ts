@@ -224,12 +224,13 @@ export default class UserController{
 
         // return user data
         res.status(200).json({
-            id: user._id,
-            name: user.name,
-            email: user.email,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+            },
             jwt: token,
         });
-
     }
 
     // find an user by email or name

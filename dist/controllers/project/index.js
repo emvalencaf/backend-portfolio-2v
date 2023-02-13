@@ -84,7 +84,7 @@ class ProjectController {
                 };
                 const project = yield project_1.default.create(data);
                 if (project) {
-                    owner.projects.push(project._id.toString());
+                    owner.projects.push(project._id);
                     yield owner.save();
                     console.log(owner.projects);
                 }
