@@ -28,6 +28,8 @@ const projectScheme = new mongoose_1.default.Schema({
         type: String, required: true, trim: true
     },
     owner: { type: mongoose_1.default.Types.ObjectId, ref: "User" },
+    createdAt: { type: Date, required: false, default: Date.now() },
+    updatedAt: { type: Date, required: false, default: null },
 });
 const ProjectModel = mongoose_1.default.model("Project", projectScheme);
 exports.default = ProjectModel;

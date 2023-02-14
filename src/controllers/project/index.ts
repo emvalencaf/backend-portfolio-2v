@@ -17,7 +17,6 @@ export default class ProjectController {
 
     // create a new project
     static async create(req: Request, res: Response) {
-
         const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
 
         
@@ -93,11 +92,10 @@ export default class ProjectController {
             if (project) {
                 owner.projects.push(project._id as unknown as ObjectId);
                 await owner.save();
-                console.log(owner.projects);
             };
 
             res.status(201).send({
-                project,
+                project
             });
 
         } catch (err) {
@@ -133,10 +131,7 @@ export default class ProjectController {
     // get projects or project by params
     static async getByParams(req: Request, res: Response) {
         const { id = "", mainLang = "", title = "", userId = "" } = req.params;
-        console.log("id params: ", id);
-        console.log("mainLang params: ", mainLang);
-        console.log("userId params: ", userId);
-        console.log("title params: ", title);
+
         if (id) return await ProjectController.getById(res, id);
 
         if ( mainLang || title || userId ) return await ProjectController.findProjectsByParams(res, {

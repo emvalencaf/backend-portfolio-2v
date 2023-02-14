@@ -26,21 +26,33 @@ export default class ProjectRepository{
 
     static async getById(id:string) {
 
-        return await ProjectModel.findById(id);
+        return await ProjectModel.findById(id).populate({
+            path: "owner",
+            select: "name _id email"
+        });
     }
 
     static async findProjectsByParams({ mainLang = "", title = "", userId = "" }:FindProjectsByParams) {
 
         if (title) return await ProjectModel.findOne({
             title: title
-        });
+        }).populate({
+            path: "owner",
+            select: "name _id email"
+        });;
 
         if (mainLang) return await ProjectModel.find({
             mainLang: mainLang
-        })
+        }).populate({
+            path: "owner",
+            select: "name _id email"
+        });;
         
         if (userId) return await ProjectModel.find({
             owner: userId
+        }).populate({
+            path: "owner",
+            select: "name _id email"
         });
 
 

@@ -18,8 +18,8 @@ class PortfolioRepository {
     static get(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (id)
-                return yield portfolio_1.default.findById(id);
-            return yield portfolio_1.default.find({});
+                return yield portfolio_1.default.findById(id).populate("owner");
+            return yield portfolio_1.default.find({}).populate("owner");
         });
     }
 }

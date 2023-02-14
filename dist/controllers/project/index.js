@@ -86,11 +86,10 @@ class ProjectController {
                 if (project) {
                     owner.projects.push(project._id);
                     yield owner.save();
-                    console.log(owner.projects);
                 }
                 ;
                 res.status(201).send({
-                    project,
+                    project
                 });
             }
             catch (err) {
@@ -120,10 +119,6 @@ class ProjectController {
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id = "", mainLang = "", title = "", userId = "" } = req.params;
-            console.log("id params: ", id);
-            console.log("mainLang params: ", mainLang);
-            console.log("userId params: ", userId);
-            console.log("title params: ", title);
             if (id)
                 return yield ProjectController.getById(res, id);
             if (mainLang || title || userId)

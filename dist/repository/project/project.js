@@ -21,7 +21,10 @@ class ProjectRepository {
     }
     static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield project_1.default.findById(id);
+            return yield project_1.default.findById(id).populate({
+                path: "owner",
+                select: "name _id email"
+            });
         });
     }
     static findProjectsByParams({ mainLang = "", title = "", userId = "" }) {
@@ -29,14 +32,25 @@ class ProjectRepository {
             if (title)
                 return yield project_1.default.findOne({
                     title: title
+                }).populate({
+                    path: "owner",
+                    select: "name _id email"
                 });
+            ;
             if (mainLang)
                 return yield project_1.default.find({
                     mainLang: mainLang
+                }).populate({
+                    path: "owner",
+                    select: "name _id email"
                 });
+            ;
             if (userId)
                 return yield project_1.default.find({
                     owner: userId
+                }).populate({
+                    path: "owner",
+                    select: "name _id email"
                 });
             return null;
         });
