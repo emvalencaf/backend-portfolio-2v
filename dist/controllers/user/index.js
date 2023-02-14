@@ -37,31 +37,31 @@ class UserController {
             // frontend data validations
             if (!newPassword)
                 return res.status(400).send({
-                    message: "error 400: bad request you must sent a new password"
+                    message: "you must sent a new password"
                 });
             if (!password)
                 return res.status(400).send({
-                    message: "error 400: bad request you must sent the currently password"
+                    message: "you must sent the currently password"
                 });
             if (!req.user)
                 return res.status(403).send({
-                    message: "error 403: forbidden access you must be logged to change your password"
+                    message: "forbidden access you must be logged to change your password"
                 });
             if (req.user.email !== email)
                 return res.status(403).send({
-                    message: "error 403: forbidden access you can not changed a password of another account"
+                    message: "forbidden access you can not changed a password of another account"
                 });
             // get user's data by the authGuard
             const { id } = req.user;
             const user = yield UserController.getById(res, id, true);
             if (!user)
                 return res.status(404).send({
-                    message: "error 404: user not found"
+                    message: "user not found"
                 });
             // check password
             if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
                 return res.status(400).send({
-                    message: "error 400: bad request you must confirm your currently password"
+                    message: "you must confirm your currently password"
                 });
             try {
                 yield user_1.default.updateUserData(user, {
@@ -76,7 +76,7 @@ class UserController {
             catch (err) {
                 console.log(`[server]: error`, err);
                 res.status(500).send({
-                    message: "error 500: internal error"
+                    message: "internal error"
                 });
             }
         });
@@ -85,17 +85,17 @@ class UserController {
     static register(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!req.body)
-                return res.status(400).send({ message: "Error 400: bad request you've sent a empety data" });
+                return res.status(400).send({ message: "you've sent a empety data" });
             const { name, password, email } = req.body;
             if (!name ||
                 !password ||
                 !email)
                 return res.status(400).send({
-                    message: "Error 400: bad request you've send a required field empety"
+                    message: "you've sent a required field empety"
                 });
             if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/))
                 return res.status(400).send({
-                    message: "Error 400: bad request you've send a invality email"
+                    message: "you've sent a invality email"
                 });
             const userFind = yield UserController.findUser({
                 email,
@@ -103,7 +103,7 @@ class UserController {
             });
             if (!!userFind)
                 return res.status(409).send({
-                    message: "Error 409: the email or username sent already is registered"
+                    message: "the email or username sent already is registered"
                 });
             const newUser = {
                 name: name.toString(),
@@ -125,7 +125,7 @@ class UserController {
             }
             catch (e) {
                 res.status(500).send({
-                    message: "error 500: internal error in our server"
+                    message: "internal error in our server"
                 });
             }
         });
@@ -142,7 +142,7 @@ class UserController {
             catch (err) {
                 console.log(`[server]: user's id ${id} not found it`);
                 res.status(404).send({
-                    message: "error 404: user not found it",
+                    message: "user not found it",
                 });
             }
         });
@@ -162,7 +162,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             if (!req.user)
                 return res.status(500).send({
-                    message: "error 500: internal error"
+                    message: "internal error"
                 });
             const { id } = req.user;
             const user = yield UserController.getById(res, id, false);
@@ -181,21 +181,21 @@ class UserController {
             const { name, email, password } = req.body;
             if (!name && !email)
                 return res.status(400).send({
-                    message: "error 400: bad request you must sent an email or name to login an user"
+                    message: "you must sent an email or name to login an user"
                 });
             if (!password)
                 return res.status(400).send({
-                    message: "error 400: bad request you must sent an password to login an user"
+                    message: "you must sent an password to login an user"
                 });
             const user = yield UserController.findUser({ name, email }, true);
             if (!user)
                 return res.status(404).send({
-                    message: "error 404: there is no user with this name or email"
+                    message: "there is no user with this name or email"
                 });
             // compare password
             if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
                 return res.status(400).send({
-                    message: "error 400: bad request you must sent a valid password"
+                    message: "you must sent a valid password"
                 });
             // get token
             const token = auth_1.default.generateToken(user._id.toString());

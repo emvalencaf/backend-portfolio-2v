@@ -22,44 +22,44 @@ export default class ProjectController {
         
         // user validation
         if (!req.user) return res.status(403).send({
-            message: "error 403: forbidden access you must be logged in for create a new portfolio"
+            message: "you must be logged in for create a new portfolio"
         });
         
         // validation
         if (!title) return res.status(404).send({
-            message: "error 400: bad request you must fill a title for your project"
+            message: "you must fill a title field for your project"
         });
 
         if (!resume) return res.status(400).send({
-            message: "error 400: bad request you must fill a resume of your project"
+            message: "you must fill a resume field of your project"
         });
         
         if (!description) return res.status(400).send({
-            message: "error 400: bad request you must fill a description of your project"
+            message: "you must fill a description field of your project"
         });
         
         if (!mainLang) return res.status(400).send({
-            message: "error 400: bad request you must fill a main language of your project"
+            message: "you must fill a main language field of your project"
         });
         
         if (!urlDemo) return res.status(400).send({
-            message: "error 400: bad request you must fill an url of your project demo"
+            message: "you must fill an url of your project demo"
         });
         
         if (!urlRepository) return res.status(400).send({
-            message: "error 400: bad request you must fill an url of your project demo"
+            message: "you must fill an url of your project demo"
         });
         
         if (resume.length > 250) return res.status(400).send({
-            message: "error 400: bad request you must not exceed 250 characters to resume your project"
+            message: "you must not exceed 250 characters to resume your project"
         });
         
         if (resume.length > 50) return res.status(400).send({
-            message: "error 400: bad request you must not exceed 50 chracters for your project title"
+            message: "you must not exceed 50 chracters for your project title"
         });
         
         if (!req.file) return res.status(400).send({
-            message: "error 400: bad request you must upload at least one photo for your project"
+            message: "you must upload at least one photo for your project"
         })
 
         const { path } = req.file;
@@ -71,7 +71,7 @@ export default class ProjectController {
         const owner = await UserController.getById(res, id, false);
         
         if (!owner) return res.status(404).send({
-            message: "error 404: user not found it"
+            message: "user not found it"
         });
 
         try {
@@ -102,7 +102,7 @@ export default class ProjectController {
             console.log(`[server]: error`, err);
 
             res.status(500).send({
-                message: "error 500: internal error"
+                message: "internal error"
             });
         }
 
@@ -122,7 +122,7 @@ export default class ProjectController {
             console.log(`[server]: error `, err);
             
             res.status(500).send({
-                message: "error 500: internal error"
+                message: "internal error"
             });
         }
 
@@ -142,7 +142,7 @@ export default class ProjectController {
 
 
         res.status(400).send({
-            message: "error 400: bad request you must fill the param"
+            message: "you must fill the param"
         })
 
     }
@@ -161,7 +161,7 @@ export default class ProjectController {
         }catch (err) {
             console.log(`[server]: error : ${err}`);
             res.status(404).send({
-                message: `error 404: project not find`
+                message: `project not find`
             })
         }
         
@@ -189,7 +189,7 @@ export default class ProjectController {
             console.log("[server]: error ", err);
 
             res.status(500).send({
-                message: `error 500: internal error`
+                message: `internal error`
             });
         }
 

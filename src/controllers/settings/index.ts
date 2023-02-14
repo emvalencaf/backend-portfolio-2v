@@ -88,7 +88,7 @@ export default class SettingsController {
         } catch(err) {
             console.log("[server]: error", err);
             res.status(500).send({
-                message: "error 500: internal error"
+                message: "internal error"
             });
         }
 
