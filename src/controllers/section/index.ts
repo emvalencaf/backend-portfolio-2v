@@ -49,6 +49,7 @@ export default class SectionController{
                 break;
             default:
                 const {
+                    title,
                     children,
                     background,
                     backgroundImg,
@@ -56,6 +57,7 @@ export default class SectionController{
                 } = data;
 
                 sanitated = {
+                    title,
                     icon,
                     children,
                     background,

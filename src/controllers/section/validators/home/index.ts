@@ -21,6 +21,7 @@ export default class HomeSectionValidator {
         if (mainStack?.length === 0) throw new Error("your home section must have at least one of your code language");
 
         return {
+            title: "home",
             owner,
             ocupation,
             mainStack,

@@ -12,6 +12,7 @@ export default class ProjectsSectionValidator{
         if (projects.length < 1 ) throw new Error("you must attach at least one project to your project section")
 
         return {
+            title: "projects",
             icon: "projects",
             projects,
         };

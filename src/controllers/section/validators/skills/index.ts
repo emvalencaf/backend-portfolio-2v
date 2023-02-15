@@ -12,6 +12,7 @@ export default class SkillsSectionValidator{
         techs.forEach(SkillsSectionValidator.validateTech)
 
         return {
+            title: "skills",
             icon: "skills",
             techs,
         }

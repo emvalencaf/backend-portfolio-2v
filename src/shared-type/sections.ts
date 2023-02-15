@@ -1,6 +1,7 @@
 import { IProject } from "../models/project";
 
 export interface ISection {
+    title: string;
     children?: string;
     background?: boolean;
     icon: "home" | "about" | "skills" | "projects";

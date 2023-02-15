@@ -66,6 +66,7 @@ const techScheme = new mongoose.Schema<ITech>({
 })
 
 const sectionScheme = new mongoose.Schema({
+    title: { type: String, trim: true, required: true },
     children: { type: String, trim: true, required: false },
     background: { type: Boolean, trim: true, required: false, default: false },
     icon: { type: String, required: false, trim: true, default: "home" },

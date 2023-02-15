@@ -36,6 +36,7 @@ export default class AboutSectionValidator {
         if (!urlDownload) throw new Error("your about section must have a link to your cv");
 
         return {
+            title: "about",
             icon: "about",
             biosData,
             educationData,
