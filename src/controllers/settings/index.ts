@@ -92,8 +92,6 @@ export default class SettingsController {
             });
         }
 
-        res.status(200).send(newData);
-
     }
 
     static async getAllSettings(req: Request, res: Response) {
