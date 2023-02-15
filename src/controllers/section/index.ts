@@ -17,7 +17,7 @@ export default class SectionController{
         try{
             // get the type by params
             const { sectionType } = req.params;
-            const data: ICreateSectionData = req.body;
+            const data = req.body;
 
             const sanitated = SectionController.validate(sectionType, data);
 

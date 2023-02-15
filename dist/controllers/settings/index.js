@@ -84,7 +84,6 @@ class SettingsController {
                     message: "internal error"
                 });
             }
-            res.status(200).send(newData);
         });
     }
     static getAllSettings(req, res) {

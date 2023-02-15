@@ -12,7 +12,7 @@ export interface ISettings extends Document{
         link: string;
         newTab?: boolean;
     },
-    menu: {
+    menu?: {
         children: string;
         icon: string;
         link: string;
@@ -30,6 +30,30 @@ export interface ISettings extends Document{
     };
 }
 
+const menuLink = new mongoose.Schema({
+    link: {
+        type: String, required: true, trim: true
+    },
+    icon: {
+        type: String, required: true, trim: true
+    },
+    children: {
+        type: String, required: true, trim: true, maxlength: 50
+    },
+    newTab: {
+        type: Boolean, required: false, default: false
+    },
+})
+const socialMediaLink = new mongoose.Schema({
+    instaURL: { type: String, required: false, trim: true, default: "" },
+    linkedinURL: { type: String, required: false, trim: true, default: "" },
+    facebookURL: { type: String, required: false, trim: true, default: "" },
+    homepageURL: { type: String, required: false, trim: true, default: "" },
+    twitterURL: { type: String, required: false, trim: true, default: "" },
+    githubURL: { type: String, required: false, trim: true, default: "" },
+    tiktokURL: { type: String, required: false, trim: true, default: "" },
+    youtubeURL: { type: String, required: false, trim: true, default: "" },
+})
 const settingsScheme = new mongoose.Schema<ISettings>({
     websiteName: { type: String, required: true, trim: true, maxlength: 50 },
     owner: { type: mongoose.Types.ObjectId, ref: "User"},
@@ -48,32 +72,8 @@ const settingsScheme = new mongoose.Schema<ISettings>({
             type: Boolean, required: false, default: false
         },
     },
-    menu: [
-        {
-            link: {
-                type: String, required: true, trim: true
-            },
-            icon: {
-                type: String, required: true, trim: true
-            },
-            children: {
-                type: String, required: true, trim: true, maxlength: 50
-            },
-            newTab: {
-                type: Boolean, required: false, default: false
-            },
-        }
-    ],
-    socialMedia: {
-        instaURL: { type: String, required: false, trim: true, default: "" },
-        linkedinURL: { type: String, required: false, trim: true, default: "" },
-        facebookURL: { type: String, required: false, trim: true, default: "" },
-        homepageURL: { type: String, required: false, trim: true, default: "" },
-        twitterURL: { type: String, required: false, trim: true, default: "" },
-        githubURL: { type: String, required: false, trim: true, default: "" },
-        tiktokURL: { type: String, required: false, trim: true, default: "" },
-        youtubeURL: { type: String, required: false, trim: true, default: "" },
-    },
+    menu: { type: [ menuLink ], required: false, default: () => ({}) },
+    socialMedia: { type: socialMediaLink, required: false },
     createdAt: { type: Date, required: false, default: Date.now()},
     updatedAt: { type: Date, required: false, defualt: null },
 });
