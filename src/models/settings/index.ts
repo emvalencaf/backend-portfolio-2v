@@ -4,7 +4,7 @@ export interface ISettings extends Document{
     owner: ObjectIdMongoose | string;
     websiteName: string;
     favIcon: string;
-    createdAt?: Date;
+    createdAt: Date;
     updatedAt?: Date;
     logo: {
         srcImg?: string;
@@ -18,6 +18,16 @@ export interface ISettings extends Document{
         link: string;
         newTab?: boolean;
     }[],
+    socialMedia: {
+        instaURL?: string;
+        linkedinURL?: string;
+        facebookURL?: string;
+        homepageURL?: string;
+        twitterURL?: string;
+        githubURL?: string;
+        tiktokURL?: string;
+        youtubeURL?: string;
+    };
 }
 
 const settingsScheme = new mongoose.Schema<ISettings>({
@@ -54,6 +64,16 @@ const settingsScheme = new mongoose.Schema<ISettings>({
             },
         }
     ],
+    socialMedia: {
+        instaURL: { type: String, required: false, trim: true, default: "" },
+        linkedinURL: { type: String, required: false, trim: true, default: "" },
+        facebookURL: { type: String, required: false, trim: true, default: "" },
+        homepageURL: { type: String, required: false, trim: true, default: "" },
+        twitterURL: { type: String, required: false, trim: true, default: "" },
+        githubURL: { type: String, required: false, trim: true, default: "" },
+        tiktokURL: { type: String, required: false, trim: true, default: "" },
+        youtubeURL: { type: String, required: false, trim: true, default: "" },
+    },
     createdAt: { type: Date, required: false, default: Date.now()},
     updatedAt: { type: Date, required: false, defualt: null },
 });

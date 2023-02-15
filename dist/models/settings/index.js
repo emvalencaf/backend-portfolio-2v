@@ -38,6 +38,16 @@ const settingsScheme = new mongoose_1.default.Schema({
             },
         }
     ],
+    socialMedia: {
+        instaURL: { type: String, required: false, trim: true, default: "" },
+        linkedinURL: { type: String, required: false, trim: true, default: "" },
+        facebookURL: { type: String, required: false, trim: true, default: "" },
+        homepageURL: { type: String, required: false, trim: true, default: "" },
+        twitterURL: { type: String, required: false, trim: true, default: "" },
+        githubURL: { type: String, required: false, trim: true, default: "" },
+        tiktokURL: { type: String, required: false, trim: true, default: "" },
+        youtubeURL: { type: String, required: false, trim: true, default: "" },
+    },
     createdAt: { type: Date, required: false, default: Date.now() },
     updatedAt: { type: Date, required: false, defualt: null },
 });
