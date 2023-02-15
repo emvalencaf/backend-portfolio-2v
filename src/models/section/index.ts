@@ -6,8 +6,8 @@ import { IBiosData, IEducation, IEducationData, IProfilePhoto, ISection, ITech, 
 
 // subDocuments
 const educationSecheme = new mongoose.Schema<IEducation>({
-    title: { type: String, required: true, trim: true, maxlength: 150 },
-    institution: { type: String, required: true, trim: true, maxlength: 150 },
+    title: { type: String, required: true, trim: true, maxlength: 50 },
+    institution: { type: String, required: true, trim: true, maxlength: 50 },
     workTime: { type: String || Number, required: true, trim: true, maxlength: 50 },
     resume: { type: String || Number, required: true, trim: true, maxlength: 250 },
     startIn: { type: Date, required: true },
@@ -27,11 +27,11 @@ const educationDataScheme = new mongoose.Schema<IEducationData>({
 });
 
 const workScheme = new mongoose.Schema<IWork>({
-    employer: { type: String, required: true, trim: true, maxlength: 150 },
-    ocupation: { type: String, required: true, trim: true, },
+    employer: { type: String, required: true, trim: true, maxlength: 50 },
+    ocupation: { type: String, required: true, trim: true, maxlength: 50},
     startIn: { type: Date, required: true, },
     endIn: { type: Date, required: false, default: null },
-    jobDescription: { type: String, required: true, trim: true, },
+    jobDescription: { type: String, required: true, trim: true, maxlength: 250 },
     showData: { type: Boolean, trim: true, required: false, default: false },
 });
 

@@ -10,7 +10,7 @@ export interface ISection {
 
 export interface ICreateSectionData extends ISection {
     owner?: string;
-    tech?: ITech[];
+    techs?: ITech[];
     ocupation?: string;
     mainStack?: string[];
     biosData?: IBiosData;

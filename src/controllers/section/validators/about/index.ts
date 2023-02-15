@@ -1,4 +1,4 @@
-import { IAboutSection, IBiosData, ICreateSectionData, IEducation } from "../../../../shared-type/sections";
+import { IAboutSection, IBiosData, ICreateSectionData, IEducation, IWork } from "../../../../shared-type/sections";
 
 export default class AboutSectionValidator {
     static validate(data: ICreateSectionData): IAboutSection {
@@ -29,6 +29,10 @@ export default class AboutSectionValidator {
 
         if (!workData) throw new Error("your about section must have some work data");
 
+        if(workData.workExperience.length >= 1) {
+            workData.workExperience.forEach(AboutSectionValidator.validateWorkData);
+        }
+
         if (!urlDownload) throw new Error("your about section must have a link to your cv");
 
         return {
@@ -55,11 +59,11 @@ export default class AboutSectionValidator {
     static validateCourseData(course: IEducation) {
         if (!course.title) throw new Error("one of yours courses doesn't have a title");
 
-        if (course.title.length > 150) throw new Error("one of your courses title has more than 150 characters");
+        if (course.title.length > 50) throw new Error("one of your courses title has more than 150 characters");
 
         if (!course.institution) throw new Error(`your ${course.title} course doesn't have an institution`);
 
-        if (course.institution.length > 150) throw new Error(`your ${course.title} course institution name has more than 150 characters`);
+        if (course.institution.length > 50) throw new Error(`your ${course.title} course institution name has more than 150 characters`);
 
         if (!course.resume) throw new Error(`your ${course.resume} course doesn't have a resume`);
 
@@ -70,6 +74,23 @@ export default class AboutSectionValidator {
         if (!course.workTime) throw new Error(`your ${course.title} course dosen't have a work time`);
 
         if (typeof course.workTime === "string") throw new Error(`your ${course.title} course has more than 50 characters`)
+
+    }
+
+    static validateWorkData(work: IWork) {
+        if (!work.employer) throw new Error("one of yours work experience doesn't have an employer");
+
+        if (work.employer.length > 50) throw new Error(`your work experience at ${work.employer}'s employer name does have more than 50 characters`);
+
+        if (!work.jobDescription) throw new Error(`your work experience at ${work.employer} doesn't have a job description`);
+        
+        if (work.jobDescription.length > 250) throw new Error(`your work experience at ${work.employer}'s job description does have more than 250 characters`);
+
+        if (!work.startIn) throw new Error(`your work experience at ${work.employer} doesn't have a job description`);
+
+        if (!work.ocupation) throw new Error(`your work experience at ${work.employer} doesn't have an ocupation`);
+
+        if (work.ocupation.length > 50) throw new Error(`your work experience at ${work.employer}'s ocupation does have more than 50 characters`);
 
     }
 }
