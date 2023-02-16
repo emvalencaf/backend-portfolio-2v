@@ -1,11 +1,11 @@
 import mongoose, { Date, ObjectId as ObjectIdMongoose } from "mongoose";
-import { ISections } from "../sections";
+import { ISection } from "../../shared-type/sections";
 import { ISettings } from "../settings";
 
 export interface IPortfolio {
     settings: ISettings,
     content: {
-        sections: ISections;
+        sections: ISection;
     };
     createdAt: Date;
     updatedAt?: Date;

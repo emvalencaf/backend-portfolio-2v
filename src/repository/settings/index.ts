@@ -6,7 +6,7 @@ type CreateData = {
     websiteName: string;
     owner: IUser;
     favIcon: string;
-    menu: {
+    menu?: {
         children: string;
         link: string;
         newTab?: boolean;
@@ -18,6 +18,16 @@ type CreateData = {
         link: string;
         newTab?: boolean;
     },
+    socialMedia?: {
+        instaURL?: string;
+        linkedinURL?: string;
+        facebookURL?: string;
+        homepageURL?: string;
+        twitterURL?: string;
+        githubURL?: string;
+        tiktokURL?: string;
+        youtubeURL?: string;
+    }
 }
 
 export default class SettingsRepository {

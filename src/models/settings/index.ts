@@ -18,7 +18,7 @@ export interface ISettings extends Document{
         link: string;
         newTab?: boolean;
     }[],
-    socialMedia: {
+    socialMedia?: {
         instaURL?: string;
         linkedinURL?: string;
         facebookURL?: string;
@@ -45,14 +45,14 @@ const menuLink = new mongoose.Schema({
     },
 })
 const socialMediaLink = new mongoose.Schema({
-    instaURL: { type: String, required: false, trim: true, default: "" },
-    linkedinURL: { type: String, required: false, trim: true, default: "" },
-    facebookURL: { type: String, required: false, trim: true, default: "" },
-    homepageURL: { type: String, required: false, trim: true, default: "" },
-    twitterURL: { type: String, required: false, trim: true, default: "" },
-    githubURL: { type: String, required: false, trim: true, default: "" },
-    tiktokURL: { type: String, required: false, trim: true, default: "" },
-    youtubeURL: { type: String, required: false, trim: true, default: "" },
+    instaURL: { type: String, required: false, trim: true },
+    linkedinURL: { type: String, required: false, trim: true },
+    facebookURL: { type: String, required: false, trim: true },
+    homepageURL: { type: String, required: false, trim: true },
+    twitterURL: { type: String, required: false, trim: true },
+    githubURL: { type: String, required: false, trim: true },
+    tiktokURL: { type: String, required: false, trim: true },
+    youtubeURL: { type: String, required: false, trim: true },
 })
 const settingsScheme = new mongoose.Schema<ISettings>({
     websiteName: { type: String, required: true, trim: true, maxlength: 50 },
@@ -72,8 +72,8 @@ const settingsScheme = new mongoose.Schema<ISettings>({
             type: Boolean, required: false, default: false
         },
     },
-    menu: { type: [ menuLink ], required: false, default: () => ({}) },
-    socialMedia: { type: socialMediaLink, required: false },
+    menu: { type: [ menuLink ], required: false },
+    socialMedia: { type: socialMediaLink, required: false, default: {} },
     createdAt: { type: Date, required: false, default: Date.now()},
     updatedAt: { type: Date, required: false, defualt: null },
 });

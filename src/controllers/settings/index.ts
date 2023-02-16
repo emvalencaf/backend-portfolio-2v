@@ -8,7 +8,7 @@ type Menu = Pick<ISettings, "menu">;
 
 export default class SettingsController {
     static async create(req: Request, res: Response) {
-        const { websiteName, favIcon, logo, menu } = req.body;
+        const { websiteName, favIcon, logo, menu, socialMedia } = req.body;
         
         // user validation
         if (!req.user) return res.status(403).send({
@@ -19,47 +19,33 @@ export default class SettingsController {
         if (!websiteName) return res.status(400).send({
             message: "error 400: bad request you must fill a name for your portfolio"
         });
-        
-        if (!favIcon) return res.status(400).send({
+
+        if(!req.files) return res.status(400).send({
+            message: ""
+        });
+
+        const files = req.files as {[fieldname: string]: Express.Multer.File[]};;
+
+        const data = {
+            websiteName,
+            favIcon: files["favIcon"][0]?.path,
+            logo: JSON.parse(logo),
+            socialMedia: socialMedia && JSON.parse(socialMedia) || {},
+        };
+        data.logo.srcImg = files["favIcon"][0]?.path;
+
+        console.log(data);
+
+        if (!data.favIcon) return res.status(400).send({
             message: "error 400: bad request you must choose a favicon for your portfolio"
         });
         
-        // menu validation
-        if (!menu) return res.status(400).send({
-            message: "error 400: bad request you must fill menu fields"
-        });
-
-        if (menu.length === 0) return res.status(400).send({
-            message: "error 400: bad request you must fill at leat one menu link"
-        });
-        
-        const arr = [];
-        
-        menu.forEach((menuLink: {
-            link: string;
-            children: string;
-            icon?: "home" | "about" | "skills" | "projects";
-            newTab?: boolean;
-        }) => {
-            if (!menuLink?.link) return arr.push({
-                ...menuLink
-            });
-            
-            if (!menuLink?.children) return arr.push({
-                ...menuLink
-            });
-        });
-        
-        if (arr.length >= 1) return res.status(400).send({
-            message: "error 400: bad request you must fill correctly the menu links"
-        });
-        
         // logo validation
-        if (!logo) return res.status(400).send({
+        if (!data.logo) return res.status(400).send({
             message: "error 400: bad request you must fill logo fields"
         });
 
-        if (!logo?.altText || !logo?.link) return res.status(400).send({
+        if (!data.logo?.altText || !data.logo?.link) return res.status(400).send({
             message: "error 400: bad request you must fill the altText and link fields"
         });
         
@@ -75,13 +61,16 @@ export default class SettingsController {
             owner,
             websiteName,
             favIcon,
-            logo,
-            menu,
+            logo: data.logo,
+            socialMedia: data.socialMedia,
         };
+        console.log(newData);
 
         try{
 
             const settings = await SettingsRepository.create(newData);
+
+            settings.save();
 
             res.status(200).send(settings);
 
