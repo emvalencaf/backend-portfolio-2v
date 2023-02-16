@@ -25,7 +25,7 @@ UploadImageMiddleware.storage = new multer_storage_cloudinary_1.CloudinaryStorag
     params: (req, file) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(JSON.stringify(req.body));
         // Upload only png and jpg formats
-        if (!file.originalname.match(/\.(png|jpg)$/))
+        if (!file.originalname.match(/\.(png|jpg|ico)$/))
             throw Error("error 400: bad request you can only upload jpg or png images");
         // get settings for name the folder
         // const { settingsId } = req.body;

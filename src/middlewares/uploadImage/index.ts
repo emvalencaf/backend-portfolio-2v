@@ -11,7 +11,7 @@ export default class UploadImageMiddleware{
     
             console.log(JSON.stringify(req.body));
             // Upload only png and jpg formats
-            if (!file.originalname.match(/\.(png|jpg)$/)) throw Error("error 400: bad request you can only upload jpg or png images");
+            if (!file.originalname.match(/\.(png|jpg|ico)$/)) throw Error("error 400: bad request you can only upload jpg or png images");
             
 
             // get settings for name the folder

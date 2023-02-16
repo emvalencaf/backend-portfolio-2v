@@ -12,7 +12,7 @@ export default class SettingsController {
         
         // user validation
         if (!req.user) return res.status(403).send({
-            message: "error 403: forbidden access you must be logged in for create a new portfolio"
+            message: "you must be logged in for create a new portfolio"
         });
 
         // validations        
@@ -20,11 +20,15 @@ export default class SettingsController {
             message: "error 400: bad request you must fill a name for your portfolio"
         });
 
-        if(!req.files) return res.status(400).send({
-            message: ""
+        const files = req.files as {[fieldname: string]: Express.Multer.File[]};;
+
+        if (!files) return res.status(400).send({
+            message:"you must upload at least favicon",
         });
 
-        const files = req.files as {[fieldname: string]: Express.Multer.File[]};;
+        if (!files || files["favIcon"][0].originalname.match(/\.(ico)$/)) return res.status(400).send({
+            message:"the favicon must be in .ico file",
+        });
 
         const data = {
             websiteName,
@@ -37,7 +41,7 @@ export default class SettingsController {
         console.log(data);
 
         if (!data.favIcon) return res.status(400).send({
-            message: "error 400: bad request you must choose a favicon for your portfolio"
+            message: "you must choose a favicon for your portfolio"
         });
         
         // logo validation
@@ -54,7 +58,7 @@ export default class SettingsController {
         const owner = await UserController.getById(res, id, false);
 
         if (!owner) return res.status(404).send({
-            message: "error 404: user not found it"
+            message: "user not found it"
         });
 
         const newData = {

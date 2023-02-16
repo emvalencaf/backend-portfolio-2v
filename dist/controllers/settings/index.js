@@ -22,19 +22,23 @@ class SettingsController {
             // user validation
             if (!req.user)
                 return res.status(403).send({
-                    message: "error 403: forbidden access you must be logged in for create a new portfolio"
+                    message: "you must be logged in for create a new portfolio"
                 });
             // validations        
             if (!websiteName)
                 return res.status(400).send({
                     message: "error 400: bad request you must fill a name for your portfolio"
                 });
-            if (!req.files)
-                return res.status(400).send({
-                    message: ""
-                });
             const files = req.files;
             ;
+            if (!files)
+                return res.status(400).send({
+                    message: "you must upload at least favicon",
+                });
+            if (!files || files["favIcon"][0].originalname.match(/\.(ico)$/))
+                return res.status(400).send({
+                    message: "the favicon must be in .ico file",
+                });
             const data = {
                 websiteName,
                 favIcon: (_a = files["favIcon"][0]) === null || _a === void 0 ? void 0 : _a.path,
@@ -45,7 +49,7 @@ class SettingsController {
             console.log(data);
             if (!data.favIcon)
                 return res.status(400).send({
-                    message: "error 400: bad request you must choose a favicon for your portfolio"
+                    message: "you must choose a favicon for your portfolio"
                 });
             // logo validation
             if (!data.logo)
@@ -60,7 +64,7 @@ class SettingsController {
             const owner = yield user_1.default.getById(res, id, false);
             if (!owner)
                 return res.status(404).send({
-                    message: "error 404: user not found it"
+                    message: "user not found it"
                 });
             const newData = {
                 owner,
