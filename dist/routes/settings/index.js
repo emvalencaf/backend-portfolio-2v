@@ -7,6 +7,7 @@ exports.SettingsRouter = void 0;
 // express
 const express_1 = __importDefault(require("express"));
 const auth_1 = __importDefault(require("../../auth"));
+// controller
 const settings_1 = __importDefault(require("../../controllers/settings"));
 const uploadImage_1 = __importDefault(require("../../middlewares/uploadImage"));
 // router
@@ -21,30 +22,3 @@ router.post("/", auth_1.default.authGuard, uploadImage_1.default.uploader.fields
         name: "logoImg", maxCount: 1,
     },
 ]), settings_1.default.create);
-/*
-when there is more than one field method used is multer.fields
-
-router.post("/api/",
-    Auth.authGuard,
-    UploadImageMiddleware.uploader.fields([
-        {
-            name: "picture",
-            maxCount: 1,
-        },
-        {
-            name: "picture2",
-            maxCount: 1,
-        }
-    ]),
-    async (req, res) => {
-
-    res.json({
-        files: req.files,
-    })
-});
-
-when there is only one
-
-multer.single("{name of the field}")
-
-*/ 

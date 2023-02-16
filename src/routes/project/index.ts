@@ -1,11 +1,16 @@
 // express
 import express from "express";
 
+
+// controller
+import ProjectController from "../../controllers/project";
+
+// middlewares
+import UploadImageMiddleware from "../../middlewares/uploadImage";
+import Auth from "../../auth";
+
 // types
 import { Router } from "express";
-import Auth from "../../auth";
-import ProjectController from "../../controllers/project";
-import UploadImageMiddleware from "../../middlewares/uploadImage";
 
 // router
 const router: Router = express.Router();

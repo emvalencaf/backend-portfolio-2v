@@ -6,9 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectRouter = void 0;
 // express
 const express_1 = __importDefault(require("express"));
-const auth_1 = __importDefault(require("../../auth"));
+// controller
 const project_1 = __importDefault(require("../../controllers/project"));
+// middlewares
 const uploadImage_1 = __importDefault(require("../../middlewares/uploadImage"));
+const auth_1 = __importDefault(require("../../auth"));
 // router
 const router = express_1.default.Router();
 exports.ProjectRouter = router;
