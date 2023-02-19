@@ -60,7 +60,7 @@ const techScheme = new mongoose.Schema<ITech>({
 
     techName: { type: String, trim: true, required: true, maxlength: 50 },
     techDescription: { type: String, trim: true, required: true, maxlength: 1000 },
-    icon: { type: String, trim: false, required: true, default: "" },
+    icon: { type: String, trim: false, required: false, default: "" },
     showTechDescription: { type: Boolean, trim: true, required: false, default: false },
 
 })
@@ -68,7 +68,7 @@ const techScheme = new mongoose.Schema<ITech>({
 const sectionScheme = new mongoose.Schema({
     title: { type: String, trim: true, required: true },
     children: { type: String, trim: true, required: false },
-    background: { type: Boolean, trim: true, required: false, default: false },
+    background: { type: Boolean, required: false, default: false },
     icon: { type: String, required: false, trim: true, default: "home" },
     backgroundImg: { type: String, required: false, trim: true, default: "" },
     createdAt: { type: Date, required: false, default: Date.now() },

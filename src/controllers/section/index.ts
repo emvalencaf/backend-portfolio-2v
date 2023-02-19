@@ -1,3 +1,6 @@
+// controller
+import UserController from "../user";
+
 // repository
 import SectionRepository from "../../repository/section";
 
@@ -11,13 +14,35 @@ import SkillsSectionValidator from "./validators/skills";
 import { Request, Response } from "express";
 import { IAboutSection, ICreateSectionData, IHomeSection, IProjectsSection, ISection, ISkillsSection } from "../../shared-type/sections";
 
-export default class SectionController{
-    static async create(req: Request, res:Response){
+export default class SectionController {
+    static async create(req: Request, res: Response) {
 
-        try{
+        try {
             // get the type by params
             const { sectionType } = req.params;
             const data = req.body;
+
+            if (!req.user) return;
+
+            const { id } = req.user;
+
+            const owner = await UserController.getById(res, id, false);
+
+            if (owner) data.owner = owner.name;
+
+            if (sectionType === "home" || sectionType === "about") {
+
+                if (!req.file) return res.status(400).send({
+                    message: `you must upload a image for ${sectionType === "home" ? "the background" : "your profile"}`,
+                })
+
+                const { path } = req.file;
+
+                data.backgroundImg = path ? path : "";
+                data.profile.srcImg = path? path: "";
+            }
+
+
 
             const sanitated = SectionController.validate(sectionType, data);
 
@@ -26,9 +51,9 @@ export default class SectionController{
             res.status(201).send({
                 response,
             })
-            
-        } catch (err) {
 
+        } catch (err) {
+            console.log(err);
         }
     }
     static validate(sectionType: string, data: ICreateSectionData): IHomeSection | IAboutSection | ISkillsSection | IProjectsSection | ISection {
