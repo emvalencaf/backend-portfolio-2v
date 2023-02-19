@@ -17,7 +17,14 @@ const router: Router = express.Router();
 // post a new section
 router.post("/:typeSection",
     Auth.authGuard,
-    UploadImageMiddleware.uploader.single("picture"),
+    UploadImageMiddleware.uploader.fields([
+        {
+            name: "backgroundImg", maxCount: 1,
+        },
+        {
+            name: "picture", maxCount: 1,
+        },
+    ]),
     SectionController.create);
 
-export { router as SettingsRouter };
+export { router as SectionRouter };

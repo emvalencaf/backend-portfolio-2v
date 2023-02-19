@@ -5,6 +5,7 @@ import express from "express";
 const router = express();
 import { PortfolioRouter } from "./portfolio";
 import { ProjectRouter } from "./project";
+import { SectionRouter } from "./section";
 import { SettingsRouter } from "./settings";
 import { UserRouter } from "./user";
 
@@ -13,7 +14,10 @@ import { UserRouter } from "./user";
 router.use("/api/users", UserRouter);
 
 // portfolio routes
-router.use("/api/portfolio", PortfolioRouter);
+router.use("/api/portfolios", PortfolioRouter);
+
+// sections
+router.use("/api/sections", SectionRouter)
 
 // settings routes
 router.use("/api/settings", SettingsRouter);

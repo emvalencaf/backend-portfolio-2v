@@ -1,4 +1,5 @@
 import { IProject } from "../models/project";
+import { ISettings } from "../models/settings";
 
 export interface ISection {
     title: string;
@@ -7,13 +8,14 @@ export interface ISection {
     icon: "home" | "about" | "skills" | "projects";
     color?: "primary" | "secondary" | "tertiary" | "quaternary" | "quinary" | "senary";
     backgroundImg?: string;
+    settings?: ISettings;
 };
 
 export interface ICreateSectionData extends ISection {
     owner?: string;
     techs?: ITech[];
     ocupation?: string;
-    mainStack?: string[];
+    mainStack?: string;
     biosData?: IBiosData;
     workData?: IWorkData;
     educationData?: IEducationData;
@@ -74,6 +76,10 @@ export interface IEducation {
 export interface IEducationData {
     higherEducation: IEducation[];
     courses: IEducation[];
+}
+
+export interface ITechData {
+    techs: ITech[];
 }
 
 export interface ITech {

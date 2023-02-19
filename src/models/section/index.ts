@@ -1,5 +1,5 @@
 import mongoose, { Date, Document, ObjectId } from "mongoose"
-import { IBiosData, IEducation, IEducationData, IProfilePhoto, ISection, ITech, IWork, IWorkData } from "../../shared-type/sections";
+import { IBiosData, IEducation, IEducationData, IProfilePhoto, ISection, ITech, ITechData, IWork, IWorkData } from "../../shared-type/sections";
 
 
 // type
@@ -45,7 +45,7 @@ const workDataScheme = new mongoose.Schema<IWorkData>({
 const profilePhotoScheme = new mongoose.Schema<IProfilePhoto>({
     srcImg: { type: String, trim: true, required: true },
     altText: { type: String, trim: true, required: true },
-})
+});
 
 const biosDataScheme = new mongoose.Schema<IBiosData>({
     bios: { type: String, trim: true, required: true, maxlength: 1000 },
@@ -54,7 +54,7 @@ const biosDataScheme = new mongoose.Schema<IBiosData>({
         default: () => ({}),
         required: true,
     }
-})
+});
 
 const techScheme = new mongoose.Schema<ITech>({
 
@@ -63,10 +63,13 @@ const techScheme = new mongoose.Schema<ITech>({
     icon: { type: String, trim: false, required: false, default: "" },
     showTechDescription: { type: Boolean, trim: true, required: false, default: false },
 
-})
+});
 
+const techDataScheme = new mongoose.Schema<ITechData>({
+    techs: { type: [techScheme], default: () => ([]) },
+});
 const sectionScheme = new mongoose.Schema({
-    title: { type: String, trim: true, required: true },
+    title: { type: String, trim: true, required: true, maxlength: 50 },
     children: { type: String, trim: true, required: false },
     background: { type: Boolean, required: false, default: false },
     icon: { type: String, required: false, trim: true, default: "home" },
@@ -75,23 +78,28 @@ const sectionScheme = new mongoose.Schema({
     updatedAt: { type: Date, required: false, default: null },
     biosData: {
         type: biosDataScheme,
-        default: () => ({}),
         required: false,
     },
     workData: {
         type: workDataScheme,
         required: false,
-        default: () => ({}),
     },
-    owner: { type: mongoose.Types.ObjectId, ref: "User", required: false },
-    ocupation: { type: String, trim: true, required: false },
+    owner: { type: "string", trim: true, required: false },
+    ocupation: { type: String, trim: true, required: false, maxlength: 50 },
     urlDownload: { type: String, required: false },
     mainStack: { type: [String], required: false },
-    educationData: { type: educationDataScheme, required: false, default: () => ({}) },
+    educationData: { type: educationDataScheme, required: false },
     techs: {
         type: [{
             type: techScheme, default: () => ({}),
-        }], required: false },
+        }], required: false 
+    },
+    projects: {
+        type: mongoose.Types.ObjectId, ref: "Project", required: false
+    },
+    settings: {
+        type: mongoose.Types.ObjectId, ref: "Settings", required: true
+    },
 });
 
 const SectionModel = mongoose.model("Section", sectionScheme);

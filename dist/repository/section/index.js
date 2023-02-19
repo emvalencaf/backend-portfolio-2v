@@ -17,6 +17,7 @@ const section_1 = __importDefault(require("../../models/section"));
 class SectionRepository {
     static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(data);
             return yield section_1.default.create(data);
         });
     }

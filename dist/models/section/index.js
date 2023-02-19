@@ -57,8 +57,11 @@ const techScheme = new mongoose_1.default.Schema({
     icon: { type: String, trim: false, required: false, default: "" },
     showTechDescription: { type: Boolean, trim: true, required: false, default: false },
 });
+const techDataScheme = new mongoose_1.default.Schema({
+    techs: { type: [techScheme], default: () => ([]) },
+});
 const sectionScheme = new mongoose_1.default.Schema({
-    title: { type: String, trim: true, required: true },
+    title: { type: String, trim: true, required: true, maxlength: 50 },
     children: { type: String, trim: true, required: false },
     background: { type: Boolean, required: false, default: false },
     icon: { type: String, required: false, trim: true, default: "home" },
@@ -67,23 +70,27 @@ const sectionScheme = new mongoose_1.default.Schema({
     updatedAt: { type: Date, required: false, default: null },
     biosData: {
         type: biosDataScheme,
-        default: () => ({}),
         required: false,
     },
     workData: {
         type: workDataScheme,
         required: false,
-        default: () => ({}),
     },
-    owner: { type: mongoose_1.default.Types.ObjectId, ref: "User", required: false },
-    ocupation: { type: String, trim: true, required: false },
+    owner: { type: "string", trim: true, required: false },
+    ocupation: { type: String, trim: true, required: false, maxlength: 50 },
     urlDownload: { type: String, required: false },
     mainStack: { type: [String], required: false },
-    educationData: { type: educationDataScheme, required: false, default: () => ({}) },
+    educationData: { type: educationDataScheme, required: false },
     techs: {
         type: [{
                 type: techScheme, default: () => ({}),
             }], required: false
+    },
+    projects: {
+        type: mongoose_1.default.Types.ObjectId, ref: "Project", required: false
+    },
+    settings: {
+        type: mongoose_1.default.Types.ObjectId, ref: "Settings", required: true
     },
 });
 const SectionModel = mongoose_1.default.model("Section", sectionScheme);
