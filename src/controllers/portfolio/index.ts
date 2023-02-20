@@ -14,7 +14,7 @@ export default class PortfolioController {
 
         try{
             
-            const portfolios = PortfolioController.find();
+            const portfolios = await PortfolioController.find();
 
         } catch (err) {
            console.log(err);
@@ -23,10 +23,8 @@ export default class PortfolioController {
            });
         }
 
-
-        
-
     }
+    
     static async find() {
         
         return await PortfolioRepository.find();

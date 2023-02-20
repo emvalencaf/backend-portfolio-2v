@@ -103,11 +103,30 @@ class SettingsController {
     }
     static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            const settings = yield settings_1.default.getById(id);
+            return settings;
+        });
+    }
+    static getByParams(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield settings_1.default.getById(id);
+                if (req.params.id) {
+                    const { id } = req.params;
+                    const settings = SettingsController.getById(id);
+                    if (!settings)
+                        return res.status(404).send({
+                            message: "settings not found it",
+                        });
+                    return res.status(200).send({
+                        settings,
+                    });
+                }
             }
             catch (err) {
-                console.log("[server]: error ", err);
+                console.log(err);
+                res.status(500).send({
+                    message: "internal error",
+                });
             }
         });
     }

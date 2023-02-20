@@ -94,53 +94,49 @@ class SectionController {
             }
         });
     }
-    static getById(req, res) {
+    static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            if (!id)
-                return res.status(400).send({
-                    message: "you must inform an id",
-                });
-            try {
-                const section = yield section_1.default.getById(id);
-                if (!section)
-                    return res.status(404).send({
-                        message: "section not found it"
-                    });
-                res.status(200).send({
-                    section,
-                });
-            }
-            catch (err) {
-                console.log(err);
-                return res.send(500).send({
-                    message: "internal error"
-                });
-            }
+            const section = yield section_1.default.getById(id);
+            return section;
         });
     }
-    static getAllBySettingId(req, res) {
+    static getAllBySettingId(settingsId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { settingsId } = req.params;
-            if (!settingsId)
-                return res.status(400).send({
-                    message: "you must selected a settings id to fetch that data"
-                });
+            const sections = yield section_1.default.getAllBySettingsId(settingsId);
+            return sections;
+        });
+    }
+    static getByParams(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sections = yield section_1.default.getAllBySettingsId(settingsId);
-                if (!sections)
-                    return res.status(404).send({
-                        message: `no sections were found attached to the settings selected`
+                if (req.params.settingsId) {
+                    const { settingsId } = req.params;
+                    const sections = yield SectionController.getAllBySettingId(settingsId);
+                    if (!sections || sections.length === 0)
+                        return res.status(404).send({
+                            message: "no sections were found attached to this settings",
+                        });
+                    return res.status(200).send({
+                        sections,
                     });
-                res.status(200).send({
-                    sections,
-                });
+                }
+                if (req.params.id) {
+                    const { id } = req.params;
+                    const section = yield SectionController.getById(id);
+                    if (!section)
+                        return res.status(404).send({
+                            message: "no section was found it",
+                        });
+                    return res.status(200).send({
+                        section,
+                    });
+                }
             }
             catch (err) {
                 console.log(err);
-                return res.send(500).send(({
-                    message: "internal error"
-                }));
+                res.send({
+                    message: "internal error",
+                });
             }
         });
     }

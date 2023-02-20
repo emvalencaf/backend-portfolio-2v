@@ -30,12 +30,12 @@ router.post("/:typeSection",
 
 router.get("/:id",
     Auth.authGuard,
-    SectionController.getById,
+    SectionController.getByParams,
 );
 
 router.get("/settings/:settingsId",
     Auth.authGuard,
-    SectionController.getAllBySettingId,
+    SectionController.getByParams,
 );
 
 export { router as SectionRouter };

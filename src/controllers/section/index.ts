@@ -17,18 +17,18 @@ import SettingsController from "../settings";
 
 export default class SectionController {
     static async create(req: Request, res: Response) {
-        
+
         try {
             // get the type by params
             const { typeSection } = req.params;
             const data = req.body;
-            
+
             if (!req.user) return;
 
             const { id } = req.user;
-            
+
             const owner = await UserController.getById(res, id, false);
-            
+
             if (!data.settings) return res.status(400).send({
                 message: "you must choose a setting to attached a section"
             });
@@ -58,11 +58,11 @@ export default class SectionController {
                 if (!req.files) return res.status(400).send({
                     message: `you must upload a image for ${typeSection === "home" ? "the background" : "your profile"}`,
                 })
-                
-                const files = req.files as {[fieldname: string]: Express.Multer.File[]};;
-                
+
+                const files = req.files as { [fieldname: string]: Express.Multer.File[] };;
+
                 if (typeSection === "home") data.backgroundImg = files["backgroundImg"][0]?.path;
-                
+
                 data.biosData = JSON.parse(data.biosData);
                 if (typeSection === "about") {
                     data.biosData.profilePhoto.srcImg = files["picture"][0]?.path;
@@ -71,10 +71,10 @@ export default class SectionController {
             }
 
             const sanitated = SectionController.validate(typeSection, data);
-            
+
             sanitated.settings = settings;
             const section = await SectionRepository.create(sanitated);
-            
+
             if (section) {
                 if (settings) {
                     settings?.menu?.push({
@@ -95,58 +95,61 @@ export default class SectionController {
         }
     }
 
-    static async getById(req: Request, res: Response) {
-        const { id } = req.params;
+    static async getById(id: string) {
+        const section = await SectionRepository.getById(id);
 
-        if (!id) return res.status(400).send({
-            message: "you must inform an id",
-        });
-
-        try {
-
-            const section = await SectionRepository.getById(id);
-
-            if (!section) return res.status(404).send({
-                message: "section not found it"
-            })
-
-            res.status(200).send({
-                section,
-            })
-
-        } catch(err) {
-            console.log(err);
-            return res.send(500).send({
-                message: "internal error"
-            });
-        }
+        return section;
 
     }
 
-    static async getAllBySettingId(req: Request, res: Response) {
-        const { settingsId } = req.params;
+    static async getAllBySettingId(settingsId: string) {
 
-        if (!settingsId) return res.status(400).send({
-            message: "you must selected a settings id to fetch that data"
-        });
+        const sections = await SectionRepository.getAllBySettingsId(settingsId);
 
-        try{
+        return sections;
 
-            const sections = await SectionRepository.getAllBySettingsId(settingsId);
+    }
 
-            if (!sections) return res.status(404).send({
-                message: `no sections were found attached to the settings selected`
-            })
+    static async getByParams(req: Request, res: Response) {
 
-            res.status(200).send({
-                sections,
-            })
+        try {
+            if (req.params.settingsId) {
 
-        } catch(err){
+                const { settingsId } = req.params;
+
+                const sections = await SectionController.getAllBySettingId(settingsId);
+
+                if (!sections || sections.length === 0) return res.status(404).send({
+                    message: "no sections were found attached to this settings",
+                });
+
+                return res.status(200).send({
+                    sections,
+                });
+
+            }
+
+            if (req.params.id) {
+
+                const { id } = req.params;
+
+                const section = await SectionController.getById(id);
+
+                if (!section) return res.status(404).send({
+                    message: "no section was found it",
+                });
+
+                return res.status(200).send({
+                    section,
+                })
+            }
+
+        } catch (err) {
             console.log(err);
-            return res.send(500).send(({
-                message: "internal error"
-            }));
+            res.send({
+                message: "internal error",
+            });
+
         }
 
     }

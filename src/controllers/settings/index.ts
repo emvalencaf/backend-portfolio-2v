@@ -106,12 +106,36 @@ export default class SettingsController {
     }
 
     static async getById(id: string) {
+
+        const settings = await SettingsRepository.getById(id);
+
+        return settings;
+    }
+
+    static async getByParams(req: Request, res: Response) {
+
         try{
 
-            return await SettingsRepository.getById(id);
+            if (req.params.id) {
 
-        } catch(err) {
-            console.log("[server]: error ", err);
+                const { id } = req.params;
+
+                const settings = SettingsController.getById(id);
+
+                if (!settings) return res.status(404).send({
+                    message: "settings not found it",
+                });
+
+                return res.status(200).send({
+                    settings,
+                })
+            }
+
+        }catch(err) {
+            console.log(err);
+            res.status(500).send({
+                message: "internal error",
+            })
         }
     }
 }

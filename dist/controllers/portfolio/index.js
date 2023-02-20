@@ -19,7 +19,7 @@ class PortfolioController {
         return __awaiter(this, void 0, void 0, function* () {
             const { settingsId } = req.params;
             try {
-                const portfolios = PortfolioController.find();
+                const portfolios = yield PortfolioController.find();
             }
             catch (err) {
                 console.log(err);
