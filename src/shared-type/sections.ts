@@ -1,6 +1,26 @@
+import { Date, Document, ObjectId as ObjectIdMongoose } from "mongoose";
 import { IProject } from "../models/project";
-import { ISettings } from "../models/settings";
+import { ISettings } from "../shared-type/settings";
 
+export interface ISectionDocument extends Document{
+    title: string;
+    children: string;
+    background?: boolean;
+    backgroundImg?: string;
+    icon?: string;
+    createdAt?: Date;
+    updatedAt?: Date | null;
+    biosData?: IBiosData;
+    urlDownload?: string;
+    workData?: IWorkData;
+    owner?: string;
+    ocupation?: string;
+    mainStack?: string[];
+    educationData?: IEducationData;
+    techs?: ITechData;
+    projects?: ObjectIdMongoose[] | string[];
+    settings: ObjectIdMongoose | string;
+}
 export interface ISection {
     title: string;
     children?: string;

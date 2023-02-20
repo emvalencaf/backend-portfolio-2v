@@ -8,6 +8,8 @@ export interface IProject extends Document{
     srcImg?: string;
     urlDemo: string;
     urlRepository: string;
+    createAt: Date | undefined;
+    updatedAt: Date | null;
     owner: ObjectId;
 };
 

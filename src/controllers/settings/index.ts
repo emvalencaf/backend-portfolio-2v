@@ -1,6 +1,6 @@
 // types
 import { Request, Response } from "express";
-import { ISettings } from "../../models/settings";
+import { ISettings } from "../../shared-type/settings";
 import SettingsRepository from "../../repository/settings";
 import UserController from "../user";
 type Logo = Pick<ISettings, "logo">;

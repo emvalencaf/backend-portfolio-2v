@@ -15,11 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // models
 const portfolio_1 = __importDefault(require("../../models/portfolio"));
 class PortfolioRepository {
-    static get(id) {
+    static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (id)
                 return yield portfolio_1.default.findById(id).populate("owner");
             return yield portfolio_1.default.find({}).populate("owner");
+        });
+    }
+    static create(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield portfolio_1.default.create(data);
         });
     }
     static find() {

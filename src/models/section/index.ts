@@ -1,8 +1,6 @@
 import mongoose, { Date, Document, ObjectId } from "mongoose"
-import { IBiosData, IEducation, IEducationData, IProfilePhoto, ISection, ITech, ITechData, IWork, IWorkData } from "../../shared-type/sections";
-
-
 // type
+import { IBiosData, IEducation, IEducationData, IProfilePhoto, ISection, ISectionDocument, ITech, ITechData, IWork, IWorkData } from "../../shared-type/sections";
 
 // subDocuments
 const educationSecheme = new mongoose.Schema<IEducation>({
@@ -68,7 +66,8 @@ const techScheme = new mongoose.Schema<ITech>({
 const techDataScheme = new mongoose.Schema<ITechData>({
     techs: { type: [techScheme], default: () => ([]) },
 });
-const sectionScheme = new mongoose.Schema({
+
+const sectionScheme = new mongoose.Schema<ISectionDocument>({
     title: { type: String, trim: true, required: true, maxlength: 50 },
     children: { type: String, trim: true, required: false },
     background: { type: Boolean, required: false, default: false },

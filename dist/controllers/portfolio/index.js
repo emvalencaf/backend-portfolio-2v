@@ -14,12 +14,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // repository
 const portfolio_1 = __importDefault(require("../../repository/portfolio"));
+// controllers
+const section_1 = __importDefault(require("../section"));
+const settings_1 = __importDefault(require("../settings"));
 class PortfolioController {
     static create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { settingsId } = req.params;
             try {
                 const portfolios = yield PortfolioController.find();
+                if (portfolios.length >= 1)
+                    return res.status(409).send({
+                        message: "there's already one portfolio in the database",
+                    });
+                const { settingsId } = req.body;
+                const settings = yield settings_1.default.getById(settingsId);
+                if (!settings)
+                    return res.status(404).send({
+                        message: "no settings were found it",
+                    });
+                const sections = yield section_1.default.getAllBySettingId(settingsId);
+                if (sections.length === 0)
+                    return res.status(404).send({
+                        message: "no sections were found it attached to this settings",
+                    });
+                const data = {
+                    settings,
+                    content: {
+                        sections: sections,
+                    },
+                };
+                const portfolio = yield portfolio_1.default.create(data);
+                return res.status(201).send({
+                    portfolio,
+                });
             }
             catch (err) {
                 console.log(err);

@@ -10,11 +10,41 @@ import SettingsController from "../settings";
 
 export default class PortfolioController {
     static async create(req: Request, res: Response) {
-        const { settingsId } = req.params;
 
         try{
             
             const portfolios = await PortfolioController.find();
+
+            if (portfolios.length >= 1) return res.status(409).send({
+                message: "there's already one portfolio in the database",
+            });
+
+            const { settingsId } = req.body;
+
+            const settings = await SettingsController.getById(settingsId);
+
+            if (!settings) return res.status(404).send({
+                message: "no settings were found it",
+            });
+
+            const sections = await SectionController.getAllBySettingId(settingsId);
+
+            if (sections.length === 0) return res.status(404).send({
+                message: "no sections were found it attached to this settings",
+            });
+
+            const data = {
+                settings,
+                content: {
+                    sections: sections,
+                },
+            }
+
+            const portfolio = await PortfolioRepository.create(data);
+
+            return res.status(201).send({
+                portfolio,
+            })
 
         } catch (err) {
            console.log(err);
@@ -24,7 +54,7 @@ export default class PortfolioController {
         }
 
     }
-    
+
     static async find() {
         
         return await PortfolioRepository.find();
