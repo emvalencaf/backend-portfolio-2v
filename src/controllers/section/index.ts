@@ -41,7 +41,7 @@ export default class SectionController {
 
             if (settings?.menu) {
                 let isThereAMenuLink: boolean = false;
-                
+
                 settings.menu.forEach((menuLink) => {
                     if (menuLink.children === typeSection) isThereAMenuLink = true;
                 });

@@ -3,11 +3,10 @@ import { ICreateSectionData, ISkillsSection, ITech } from "../../../../shared-ty
 
 export default class SkillsSectionValidator{
     static validate(data: ICreateSectionData): ISkillsSection {
-        const {
-            techs
-        } = data;
 
-        if (!techs) throw new Error("your skills sections must have tech data attached");
+        if (!data.techs) throw new Error("your skills sections must have tech data attached");
+
+        const techs = JSON.parse(data.techs);
 
         techs.forEach(SkillsSectionValidator.validateTech)
 

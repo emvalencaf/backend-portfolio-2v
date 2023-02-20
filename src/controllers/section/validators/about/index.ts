@@ -3,19 +3,21 @@ import { IAboutSection, IBiosData, ICreateSectionData, IEducation, IWork } from 
 export default class AboutSectionValidator {
     static validate(data: ICreateSectionData): IAboutSection {
         const {
-            biosData,
-            educationData,
-            workData,
             urlDownload,
         } = data;
 
+        
         // biosData validation
-        if (!biosData) throw new Error("your about section must have some bios data ");
+        if (!data.biosData) throw new Error("your about section must have some bios data ");
 
+        const biosData = JSON.parse(data.biosData);
+        
         AboutSectionValidator.validateBiosData(biosData);
 
         // educationData validation
-        if (!educationData) throw new Error("your about section must have some education data");
+        if (!data.educationData) throw new Error("your about section must have some education data");
+
+        const educationData = JSON.parse(data.educationData);
 
         if (!educationData.courses && !educationData.higherEducation) throw new Error("your about section must have at some of your education data");
 
@@ -27,7 +29,9 @@ export default class AboutSectionValidator {
             educationData.higherEducation.forEach(AboutSectionValidator.validateCourseData);
         }
 
-        if (!workData) throw new Error("your about section must have some work data");
+        if (!data.workData) throw new Error("your about section must have some work data");
+
+        const workData = JSON.parse(data.workData);
 
         if(workData.workExperience.length >= 1) {
             workData.workExperience.forEach(AboutSectionValidator.validateWorkData);

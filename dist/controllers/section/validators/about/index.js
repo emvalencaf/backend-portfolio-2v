@@ -2,14 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class AboutSectionValidator {
     static validate(data) {
-        const { biosData, educationData, workData, urlDownload, } = data;
+        const { urlDownload, } = data;
         // biosData validation
-        if (!biosData)
+        if (!data.biosData)
             throw new Error("your about section must have some bios data ");
+        const biosData = JSON.parse(data.biosData);
         AboutSectionValidator.validateBiosData(biosData);
         // educationData validation
-        if (!educationData)
+        if (!data.educationData)
             throw new Error("your about section must have some education data");
+        const educationData = JSON.parse(data.educationData);
         if (!educationData.courses && !educationData.higherEducation)
             throw new Error("your about section must have at some of your education data");
         if (educationData.courses.length >= 1) {
@@ -18,8 +20,9 @@ class AboutSectionValidator {
         if (educationData.higherEducation.length >= 1) {
             educationData.higherEducation.forEach(AboutSectionValidator.validateCourseData);
         }
-        if (!workData)
+        if (!data.workData)
             throw new Error("your about section must have some work data");
+        const workData = JSON.parse(data.workData);
         if (workData.workExperience.length >= 1) {
             workData.workExperience.forEach(AboutSectionValidator.validateWorkData);
         }

@@ -13,13 +13,13 @@ export interface ISection {
 
 export interface ICreateSectionData extends ISection {
     owner?: string;
-    techs?: ITech[];
+    techs?: string;
     ocupation?: string;
     mainStack?: string;
-    biosData?: IBiosData;
-    workData?: IWorkData;
-    educationData?: IEducationData;
-    projects?: IProject[];
+    biosData?: string;
+    workData?: string;
+    educationData?: string;
+    projects?: string;
     urlDownload?: string;
 }
 
