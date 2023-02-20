@@ -25,6 +25,17 @@ router.post("/:typeSection",
             name: "picture", maxCount: 1,
         },
     ]),
-    SectionController.create);
+    SectionController.create,
+);
+
+router.get("/:id",
+    Auth.authGuard,
+    SectionController.getById,
+);
+
+router.get("/settings/:settingsId",
+    Auth.authGuard,
+    SectionController.getAllBySettingIds,
+);
 
 export { router as SectionRouter };

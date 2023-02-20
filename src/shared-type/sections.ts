@@ -16,7 +16,7 @@ export interface ICreateSectionData extends ISection {
     techs?: string;
     ocupation?: string;
     mainStack?: string;
-    biosData?: string;
+    biosData?: IBiosData;
     workData?: string;
     educationData?: string;
     projects?: string;

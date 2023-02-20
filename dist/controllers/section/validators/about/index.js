@@ -2,11 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class AboutSectionValidator {
     static validate(data) {
-        const { urlDownload, } = data;
+        const { biosData, urlDownload, } = data;
         // biosData validation
-        if (!data.biosData)
+        if (!biosData)
             throw new Error("your about section must have some bios data ");
-        const biosData = JSON.parse(data.biosData);
         AboutSectionValidator.validateBiosData(biosData);
         // educationData validation
         if (!data.educationData)

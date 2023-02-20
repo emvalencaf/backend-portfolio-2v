@@ -95,7 +95,7 @@ const sectionScheme = new mongoose.Schema({
         }], required: false 
     },
     projects: {
-        type: mongoose.Types.ObjectId, ref: "Project", required: false
+        type: [mongoose.Types.ObjectId], ref: "Project", required: false
     },
     settings: {
         type: mongoose.Types.ObjectId, ref: "Settings", required: true

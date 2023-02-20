@@ -64,14 +64,15 @@ class SectionController {
                         });
                     const files = req.files;
                     ;
-                    console.log(files);
                     if (typeSection === "home")
                         data.backgroundImg = (_a = files["backgroundImg"][0]) === null || _a === void 0 ? void 0 : _a.path;
-                    if (typeSection === "about")
-                        data.profile.srcImg = (_b = files["picture"][0]) === null || _b === void 0 ? void 0 : _b.path;
+                    data.biosData = JSON.parse(data.biosData);
+                    if (typeSection === "about") {
+                        data.biosData.profilePhoto.srcImg = (_b = files["picture"][0]) === null || _b === void 0 ? void 0 : _b.path;
+                        data.biosData.profilePhoto.altText = `profile picture`;
+                    }
                 }
                 const sanitated = SectionController.validate(typeSection, data);
-                console.log(sanitated);
                 sanitated.settings = settings;
                 const section = yield section_1.default.create(sanitated);
                 if (section) {
@@ -90,6 +91,56 @@ class SectionController {
             }
             catch (err) {
                 console.log(err);
+            }
+        });
+    }
+    static getById(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            if (!id)
+                return res.status(400).send({
+                    message: "you must inform an id",
+                });
+            try {
+                const section = yield section_1.default.getById(id);
+                if (!section)
+                    return res.status(404).send({
+                        message: "section not found it"
+                    });
+                res.status(200).send({
+                    section,
+                });
+            }
+            catch (err) {
+                console.log(err);
+                return res.send(500).send({
+                    message: "internal error"
+                });
+            }
+        });
+    }
+    static getAllBySettingIds(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { settingsId } = req.params;
+            if (!settingsId)
+                return res.status(400).send({
+                    message: "you must selected a settings id to fetch that data"
+                });
+            try {
+                const sections = yield section_1.default.getAllBySettingsId(settingsId);
+                if (!sections)
+                    return res.status(404).send({
+                        message: `no sections were found attached to the settings selected`
+                    });
+                res.status(200).send({
+                    sections,
+                });
+            }
+            catch (err) {
+                console.log(err);
+                return res.send(500).send(({
+                    message: "internal error"
+                }));
             }
         });
     }

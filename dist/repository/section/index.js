@@ -17,12 +17,24 @@ const section_1 = __importDefault(require("../../models/section"));
 class SectionRepository {
     static create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(data);
             return yield section_1.default.create(data);
         });
     }
     static update(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            // to be implemented
+        });
+    }
+    static getById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield section_1.default.findById(id).populate("projects");
+        });
+    }
+    static getAllBySettingsId(settingsId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield section_1.default.find({
+                settings: settingsId,
+            }).populate("projects");
         });
     }
 }

@@ -87,7 +87,7 @@ const sectionScheme = new mongoose_1.default.Schema({
             }], required: false
     },
     projects: {
-        type: mongoose_1.default.Types.ObjectId, ref: "Project", required: false
+        type: [mongoose_1.default.Types.ObjectId], ref: "Project", required: false
     },
     settings: {
         type: mongoose_1.default.Types.ObjectId, ref: "Settings", required: true

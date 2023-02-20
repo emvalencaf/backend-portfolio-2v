@@ -3,14 +3,13 @@ import { IAboutSection, IBiosData, ICreateSectionData, IEducation, IWork } from 
 export default class AboutSectionValidator {
     static validate(data: ICreateSectionData): IAboutSection {
         const {
+            biosData,
             urlDownload,
         } = data;
 
         
         // biosData validation
-        if (!data.biosData) throw new Error("your about section must have some bios data ");
-
-        const biosData = JSON.parse(data.biosData);
+        if (!biosData) throw new Error("your about section must have some bios data ");
         
         AboutSectionValidator.validateBiosData(biosData);
 
