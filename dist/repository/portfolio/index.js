@@ -29,7 +29,19 @@ class PortfolioRepository {
     }
     static find() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield portfolio_1.default.find({});
+            return yield portfolio_1.default.find({}).populate([
+                {
+                    path: "settings",
+                    model: "Settings",
+                },
+                {
+                    path: "content",
+                    populate: {
+                        path: "sections",
+                        model: "Section",
+                    }
+                }
+            ]);
         });
     }
 }

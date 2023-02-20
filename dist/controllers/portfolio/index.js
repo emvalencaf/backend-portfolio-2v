@@ -61,5 +61,26 @@ class PortfolioController {
             return yield portfolio_1.default.find();
         });
     }
+    static get(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const portfolios = yield PortfolioController.find();
+                if (portfolios.length === 0)
+                    return res.status(404).send({
+                        message: "no portfolio were found it",
+                    });
+                const portfolio = portfolios[0];
+                return res.status(200).send({
+                    portfolio,
+                });
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).send({
+                    message: "internal error",
+                });
+            }
+        });
+    }
 }
 exports.default = PortfolioController;

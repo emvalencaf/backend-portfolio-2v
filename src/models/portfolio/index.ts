@@ -1,6 +1,6 @@
 import mongoose, { Date, ObjectId as ObjectIdMongoose } from "mongoose";
 import { ISection } from "../../shared-type/sections";
-import { ISettings } from "../settings";
+import { ISettings } from "../../shared-type/settings";
 
 export interface IPortfolio {
     settings: ISettings,
@@ -16,7 +16,7 @@ const portfolioScheme = new mongoose.Schema<IPortfolio>({
         type: mongoose.Types.ObjectId, ref: "Settings"
     },
     content: {
-        sections: { type: [mongoose.Types.ObjectId], ref: "Section" },
+        sections: [{ type: mongoose.Types.ObjectId, ref: "Section" }],
     },
     createdAt: { type: Date, required: false, default: Date.now()},
     updatedAt: { type: Date, required: false, defualt: null },

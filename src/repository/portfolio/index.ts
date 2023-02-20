@@ -25,7 +25,19 @@ export default class PortfolioRepository{
     }
 
     static async find() {
-        return await ModelPortfolio.find({});
+        return await ModelPortfolio.find({}).populate([
+            {
+                path: "settings",
+                model: "Settings",
+            },
+            {
+                path: "content",
+                populate: {
+                    path: "sections",
+                    model: "Section",
+                }
+            }
+        ]);
     }
 
 }

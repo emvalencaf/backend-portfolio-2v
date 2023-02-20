@@ -8,6 +8,7 @@ import { Request, Response } from "express";
 import SectionController from "../section";
 import SettingsController from "../settings";
 
+
 export default class PortfolioController {
     static async create(req: Request, res: Response) {
 
@@ -59,5 +60,29 @@ export default class PortfolioController {
         
         return await PortfolioRepository.find();
 
+    }
+
+    static async get(req: Request, res: Response) {
+        
+        try {
+            const portfolios = await PortfolioController.find();
+    
+            if (portfolios.length === 0) return res.status(404).send({
+                message: "no portfolio were found it",
+            });
+
+            const portfolio = portfolios[0];
+
+            return res.status(200).send({
+                portfolio,
+            })
+
+        } catch (err) {
+            console.log(err);
+
+            res.status(500).send({
+                message: "internal error",
+            });
+        }
     }
 }
