@@ -6,7 +6,7 @@ import ProjectRepository from "../../repository/project/project";
 
 // types
 import { Request, Response } from "express";
-import mongoose, { ObjectId } from "mongoose";
+import { ObjectId } from "mongoose";
 export type FindProjectsByParams = {
     mainLang?: string;
     title?: string;

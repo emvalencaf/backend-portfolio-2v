@@ -5,18 +5,31 @@ import PortfolioRepository from "../../repository/portfolio";
 import { Request, Response } from "express";
 
 // controllers
+import SectionController from "../section";
 import SettingsController from "../settings";
 
 export default class PortfolioController {
-    static async get(req:Request, res:Response) {
+    static async create(req: Request, res: Response) {
+        const { settingsId } = req.params;
+
         try{
+            
+            const portfolios = PortfolioController.find();
 
-            const response = await PortfolioRepository.get();
-
-            res.status(200).send(response);
-
-        } catch(e) {
-            res.status(404).send({message: "error 404", err: e});
+        } catch (err) {
+           console.log(err);
+           res.status(500).send({
+            message: "internal error"
+           });
         }
+
+
+        
+
+    }
+    static async find() {
+        
+        return await PortfolioRepository.find();
+
     }
 }

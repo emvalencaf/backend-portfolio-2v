@@ -35,7 +35,7 @@ router.get("/:id",
 
 router.get("/settings/:settingsId",
     Auth.authGuard,
-    SectionController.getAllBySettingIds,
+    SectionController.getAllBySettingId,
 );
 
 export { router as SectionRouter };

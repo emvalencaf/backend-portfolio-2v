@@ -22,5 +22,10 @@ class PortfolioRepository {
             return yield portfolio_1.default.find({}).populate("owner");
         });
     }
+    static find() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield portfolio_1.default.find({});
+        });
+    }
 }
 exports.default = PortfolioRepository;

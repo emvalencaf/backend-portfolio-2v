@@ -123,7 +123,7 @@ export default class SectionController {
 
     }
 
-    static async getAllBySettingIds(req: Request, res: Response) {
+    static async getAllBySettingId(req: Request, res: Response) {
         const { settingsId } = req.params;
 
         if (!settingsId) return res.status(400).send({

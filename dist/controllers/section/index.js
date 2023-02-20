@@ -119,7 +119,7 @@ class SectionController {
             }
         });
     }
-    static getAllBySettingIds(req, res) {
+    static getAllBySettingId(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { settingsId } = req.params;
             if (!settingsId)

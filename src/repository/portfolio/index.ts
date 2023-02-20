@@ -8,4 +8,9 @@ export default class PortfolioRepository{
 
         return await ModelPortfolio.find({}).populate("owner");
     }
+
+    static async find() {
+        return await ModelPortfolio.find({});
+    }
+
 }

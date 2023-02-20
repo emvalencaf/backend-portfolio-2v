@@ -9,7 +9,7 @@ const portfolioScheme = new mongoose_1.default.Schema({
         type: mongoose_1.default.Types.ObjectId, ref: "Settings"
     },
     content: {
-        sections: { type: mongoose_1.default.Types.ObjectId, ref: "Sections" },
+        sections: { type: [mongoose_1.default.Types.ObjectId], ref: "Section" },
     },
     createdAt: { type: Date, required: false, default: Date.now() },
     updatedAt: { type: Date, required: false, defualt: null },

@@ -15,15 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // repository
 const portfolio_1 = __importDefault(require("../../repository/portfolio"));
 class PortfolioController {
-    static get(req, res) {
+    static create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { settingsId } = req.params;
             try {
-                const response = yield portfolio_1.default.get();
-                res.status(200).send(response);
+                const portfolios = PortfolioController.find();
             }
-            catch (e) {
-                res.status(404).send({ message: "error 404", err: e });
+            catch (err) {
+                console.log(err);
+                res.status(500).send({
+                    message: "internal error"
+                });
             }
+        });
+    }
+    static find() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield portfolio_1.default.find();
         });
     }
 }
