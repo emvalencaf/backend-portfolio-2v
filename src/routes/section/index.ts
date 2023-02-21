@@ -28,6 +28,11 @@ router.post("/:typeSection",
     SectionController.create,
 );
 
+router.put("/:id",
+    Auth.authGuard,
+    SectionController.update,
+);
+
 router.get("/:id",
     Auth.authGuard,
     SectionController.getByParams,
