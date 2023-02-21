@@ -7,6 +7,7 @@ import ProjectRepository from "../../repository/project/project";
 // types
 import { Request, Response } from "express";
 import { ObjectId } from "mongoose";
+import { CreateDataParamsProject } from "../../shared-type/project";
 export type FindProjectsByParams = {
     mainLang?: string;
     title?: string;
@@ -110,6 +111,84 @@ export default class ProjectController {
 
     // update a project
     static async update(req: Request, res: Response) {
+        const { id } = req.params;
+
+        const project = await ProjectController.getById(id);
+
+        if (!project) return res.status(404).send({
+            message: "project not found it",
+        });
+
+        const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
+
+        if (!title) return res.status(404).send({
+            message: "you must fill a title field for your project"
+        });
+
+        if (!resume) return res.status(400).send({
+            message: "you must fill a resume field of your project"
+        });
+
+        if (!description) return res.status(400).send({
+            message: "you must fill a description field of your project"
+        });
+
+        if (!mainLang) return res.status(400).send({
+            message: "you must fill a main language field of your project"
+        });
+
+        if (!urlDemo) return res.status(400).send({
+            message: "you must fill an url of your project demo"
+        });
+
+        if (!urlRepository) return res.status(400).send({
+            message: "you must fill an url of your project demo"
+        });
+
+        if (resume.length > 250) return res.status(400).send({
+            message: "you must not exceed 250 characters to resume your project"
+        });
+
+        if (resume.length > 50) return res.status(400).send({
+            message: "you must not exceed 50 chracters for your project title"
+        });
+
+        if (!req.file) return res.status(400).send({
+            message: "you must upload at least one photo for your project"
+        })
+
+        const { path } = req.file;
+
+        const srcImg = path ? path : "";
+
+        try{
+
+            const data: CreateDataParamsProject = {
+                title,
+                resume,
+                description,
+                owner: project.owner,
+                srcImg,
+                mainLang,
+                urlDemo,
+                urlRepository,
+            }
+
+            await ProjectRepository.update(data, project);
+
+            res.status(204).send({
+                message: `${title} project was successfully updated`,
+            });
+
+            return;
+
+        } catch(err){
+            console.log("[server] : error : ", err);
+            res.status(500).send({
+                message: "internal error",
+            });
+            return;
+        }
 
     }
 

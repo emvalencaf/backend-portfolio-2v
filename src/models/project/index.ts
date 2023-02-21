@@ -1,19 +1,7 @@
-import mongoose, { Document, ObjectId } from "mongoose";
+import mongoose from "mongoose";
+import { IProject } from "../../shared-type/project";
 
-export interface IProject extends Document{
-    title: string;
-    resume: string;
-    description: string;
-    mainLang: string;
-    srcImg?: string;
-    urlDemo: string;
-    urlRepository: string;
-    createAt: Date | undefined;
-    updatedAt: Date | null;
-    owner: ObjectId;
-};
-
-const projectScheme = new mongoose.Schema({
+const projectScheme = new mongoose.Schema<IProject>({
     title: {
         type: String, required: true, trim: true, maxlength: 50,
     },

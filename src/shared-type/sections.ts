@@ -1,5 +1,5 @@
 import { Date, Document, ObjectId as ObjectIdMongoose } from "mongoose";
-import { IProject } from "../models/project";
+import { IProject } from "../shared-type/project";
 import { ISettings } from "../shared-type/settings";
 
 export interface ISectionDocument extends Document{

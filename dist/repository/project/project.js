@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// model
 const project_1 = __importDefault(require("../../models/project"));
 class ProjectRepository {
     static create(data) {
@@ -19,8 +20,19 @@ class ProjectRepository {
             return yield project_1.default.create(data);
         });
     }
-    static update() {
+    static update(data, project) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { title, resume, description, owner, srcImg, mainLang, urlDemo, urlRepository, } = data;
+            project.title = title;
+            project.resume = resume;
+            project.description = description;
+            project.owner = owner;
+            project.srcImg = srcImg;
+            project.mainLang = mainLang;
+            project.urlDemo = urlDemo;
+            project.urlRepository = urlRepository;
+            project.updatedAt = Date.now();
+            yield project.save();
         });
     }
     static getById(id) {

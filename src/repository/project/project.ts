@@ -1,31 +1,43 @@
 // model
-import { Response } from "express";
-import { FindProjectsByParams } from "../../controllers/project";
 import ProjectModel from "../../models/project";
 
 // type
-import { IUser } from "../../models/user";
-type CreateDataParams = {
-    title: string;
-    resume: string;
-    description: string;
-    mainLang: "javascript" | "typescript" | "html" | "css" | "python" | "java" | "csharp" | "php" | "cplus";
-    srcImg?: string;
-    urlDemo: string;
-    urlRepository: string;
-    owner: IUser
-}
+import { FindProjectsByParams } from "../../controllers/project";
+import { CreateDataParamsProject, IProject } from "../../shared-type/project";
+import { ObjectId } from "mongoose";
 
 export default class ProjectRepository{
 
-    static async create(data:CreateDataParams) {
+    static async create(data:CreateDataParamsProject) {
 
         return await ProjectModel.create(data);
 
     }
 
-    static async update() {
-        
+    static async update(data: CreateDataParamsProject, project: IProject) {
+        const {
+            title,
+            resume,
+            description,
+            owner,
+            srcImg,
+            mainLang,
+            urlDemo,
+            urlRepository,
+        } = data;
+
+        project.title = title;
+        project.resume = resume;
+        project.description = description;
+        project.owner = owner as ObjectId;
+        project.srcImg = srcImg;
+        project.mainLang = mainLang;
+        project.urlDemo = urlDemo;
+        project.urlRepository = urlRepository;
+
+        project.updatedAt = Date.now(); 
+
+        await project.save();
     }
 
     static async getById(id:string) {
