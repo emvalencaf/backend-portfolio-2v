@@ -16,6 +16,8 @@ import { IAboutSection, ICreateSectionData, IHomeSection, IProjectsSection, ISec
 import SettingsController from "../settings";
 
 export default class SectionController {
+
+    // create a section
     static async create(req: Request, res: Response) {
 
         try {
@@ -102,7 +104,7 @@ export default class SectionController {
             })
 
         } catch (err) {
-            console.log(err);
+            console.log("[server]: error: ",err);
 
             res.status(500).send({
                 message: "internal error",
@@ -110,6 +112,7 @@ export default class SectionController {
         }
     }
 
+    // get a section by it's id
     static async getById(id: string) {
 
         const section = await SectionRepository.getById(id);
@@ -118,7 +121,8 @@ export default class SectionController {
 
     }
 
-    static async getAllBySettingId(settingsId: string) {
+    // get all sections attached to a settings id
+    static async getAllBySettingsId(settingsId: string) {
 
         const sections = await SectionRepository.getAllBySettingsId(settingsId);
 
@@ -126,6 +130,7 @@ export default class SectionController {
 
     }
 
+    // a controller to callback getById or getAllBySettingsId
     static async getByParams(req: Request, res: Response) {
 
         try {
@@ -133,7 +138,7 @@ export default class SectionController {
 
                 const { settingsId } = req.params;
 
-                const sections = await SectionController.getAllBySettingId(settingsId);
+                const sections = await SectionController.getAllBySettingsId(settingsId);
 
                 if (!sections || sections.length === 0) return res.status(404).send({
                     message: "no sections were found attached to this settings",
@@ -161,7 +166,7 @@ export default class SectionController {
             }
 
         } catch (err) {
-            console.log(err);
+            console.log(`[server]: error: `,err);
             res.send({
                 message: "internal error",
             });
@@ -170,6 +175,7 @@ export default class SectionController {
 
     }
 
+    // update a section
     static async update(req: Request, res: Response) {
         const { id } = req.params;
         
@@ -205,13 +211,14 @@ export default class SectionController {
             });
 
         } catch(err) {
-            console.log(err);
+            console.log("[server]: error:",err);
             res.status(500).send({
                 message: "internal error",
             });
         }
     }
 
+    // validate the section's props by it's types.
     static validate(typeSection: string, data: ICreateSectionData): IHomeSection | IAboutSection | ISkillsSection | IProjectsSection | ISection {
 
         let sanitated: IHomeSection | IAboutSection | ISkillsSection | IProjectsSection | ISection;

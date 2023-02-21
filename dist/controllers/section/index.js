@@ -23,6 +23,7 @@ const home_1 = __importDefault(require("./validators/home"));
 const skills_1 = __importDefault(require("./validators/skills"));
 const settings_1 = __importDefault(require("../settings"));
 class SectionController {
+    // create a section
     static create(req, res) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
@@ -99,31 +100,34 @@ class SectionController {
                 });
             }
             catch (err) {
-                console.log(err);
+                console.log("[server]: error: ", err);
                 res.status(500).send({
                     message: "internal error",
                 });
             }
         });
     }
+    // get a section by it's id
     static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const section = yield section_1.default.getById(id);
             return section;
         });
     }
-    static getAllBySettingId(settingsId) {
+    // get all sections attached to a settings id
+    static getAllBySettingsId(settingsId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sections = yield section_1.default.getAllBySettingsId(settingsId);
             return sections;
         });
     }
+    // a controller to callback getById or getAllBySettingsId
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (req.params.settingsId) {
                     const { settingsId } = req.params;
-                    const sections = yield SectionController.getAllBySettingId(settingsId);
+                    const sections = yield SectionController.getAllBySettingsId(settingsId);
                     if (!sections || sections.length === 0)
                         return res.status(404).send({
                             message: "no sections were found attached to this settings",
@@ -145,13 +149,14 @@ class SectionController {
                 }
             }
             catch (err) {
-                console.log(err);
+                console.log(`[server]: error: `, err);
                 res.send({
                     message: "internal error",
                 });
             }
         });
     }
+    // update a section
     static update(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
@@ -179,13 +184,14 @@ class SectionController {
                 });
             }
             catch (err) {
-                console.log(err);
+                console.log("[server]: error:", err);
                 res.status(500).send({
                     message: "internal error",
                 });
             }
         });
     }
+    // validate the section's props by it's types.
     static validate(typeSection, data) {
         let sanitated;
         switch (typeSection) {

@@ -32,7 +32,7 @@ class PortfolioController {
                     return res.status(404).send({
                         message: "no settings were found it",
                     });
-                const sections = yield section_1.default.getAllBySettingId(settingsId);
+                const sections = yield section_1.default.getAllBySettingsId(settingsId);
                 if (sections.length === 0)
                     return res.status(404).send({
                         message: "no sections were found it attached to this settings",
@@ -49,7 +49,7 @@ class PortfolioController {
                 });
             }
             catch (err) {
-                console.log(err);
+                console.log("[server]: error: ", err);
                 res.status(500).send({
                     message: "internal error"
                 });
@@ -75,7 +75,7 @@ class PortfolioController {
                 });
             }
             catch (err) {
-                console.log(err);
+                console.log("[server]: error: ", err);
                 res.status(500).send({
                     message: "internal error",
                 });

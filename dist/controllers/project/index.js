@@ -100,6 +100,11 @@ class ProjectController {
             }
         });
     }
+    // update a project
+    static update(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
     // get all projects
     static getAllProjects(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -115,61 +120,63 @@ class ProjectController {
             }
         });
     }
-    // get projects or project by params
+    // a controller to callback getById and findProejctsByParams
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id = "", mainLang = "", title = "", userId = "" } = req.params;
-            if (id)
-                return yield ProjectController.getById(res, id);
-            if (mainLang || title || userId)
-                return yield ProjectController.findProjectsByParams(res, {
-                    mainLang,
-                    title,
-                    userId,
+            try {
+                if (id) {
+                    const project = yield ProjectController.getById(id);
+                    if (!project)
+                        return res.status(404).send({
+                            message: "project not found it",
+                        });
+                    res.status(200).send({
+                        project,
+                    });
+                    return;
+                }
+                if (mainLang || title || userId) {
+                    const projects = yield ProjectController.findProjectsByParams({
+                        mainLang,
+                        title,
+                        userId,
+                    });
+                    if (!projects)
+                        return res.status(404).send({
+                            message: "no project were found it",
+                        });
+                    res.status(200).send({
+                        projects,
+                    });
+                    return;
+                }
+            }
+            catch (err) {
+                console.log(`[server]: error:`, err);
+                res.status(404).send({
+                    message: "internal error",
                 });
-            res.status(400).send({
-                message: "you must fill the param"
-            });
+                return;
+            }
         });
     }
     // get a project by id
-    static getById(res, id) {
+    static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const project = yield project_1.default.getById(id);
-                res.status(200).send({
-                    project,
-                });
-            }
-            catch (err) {
-                console.log(`[server]: error : ${err}`);
-                res.status(404).send({
-                    message: `project not find`
-                });
-            }
+            const project = yield project_1.default.getById(id);
+            return project;
         });
     }
     // find projects by params
-    static findProjectsByParams(res, { mainLang = "", title = "", userId = "", }) {
+    static findProjectsByParams({ mainLang = "", title = "", userId = "", }) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const projects = yield project_1.default.findProjectsByParams({
-                    mainLang,
-                    title,
-                    userId
-                });
-                if (!projects)
-                    res.status(400).send({
-                        message: "error 400: bad request you must pass a valida params"
-                    });
-                res.status(200).send(projects);
-            }
-            catch (err) {
-                console.log("[server]: error ", err);
-                res.status(500).send({
-                    message: `internal error`
-                });
-            }
+            const projects = yield project_1.default.findProjectsByParams({
+                mainLang,
+                title,
+                userId
+            });
+            return projects;
         });
     }
 }

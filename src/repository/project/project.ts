@@ -24,6 +24,10 @@ export default class ProjectRepository{
 
     }
 
+    static async update() {
+        
+    }
+
     static async getById(id:string) {
 
         return await ProjectModel.findById(id).populate({

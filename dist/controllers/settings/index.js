@@ -80,7 +80,7 @@ class SettingsController {
                 res.status(200).send(settings);
             }
             catch (err) {
-                console.log("[server]: error", err);
+                console.log("[server]: error: ", err);
                 res.status(500).send({
                     message: "internal error"
                 });
@@ -94,7 +94,7 @@ class SettingsController {
                 res.status(200).send(settings);
             }
             catch (err) {
-                console.log(`[server]: error ${err}`);
+                console.log(`[server]: error : ${err}`);
                 res.status(500).send({
                     message: "error 500: internal error"
                 });
@@ -123,7 +123,7 @@ class SettingsController {
                 }
             }
             catch (err) {
-                console.log(err);
+                console.log("[server]: error: ", err);
                 res.status(500).send({
                     message: "internal error",
                 });

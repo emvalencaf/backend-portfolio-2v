@@ -19,6 +19,10 @@ class ProjectRepository {
             return yield project_1.default.create(data);
         });
     }
+    static update() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
     static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield project_1.default.findById(id).populate({
