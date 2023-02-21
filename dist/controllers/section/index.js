@@ -72,7 +72,16 @@ class SectionController {
                         data.biosData.profilePhoto.altText = `profile picture`;
                     }
                 }
-                const sanitated = SectionController.validate(typeSection, data);
+                let sanitated;
+                try {
+                    sanitated = SectionController.validate(typeSection, data);
+                }
+                catch (err) {
+                    const { message } = err;
+                    return res.status(400).send({
+                        message: message,
+                    });
+                }
                 sanitated.settings = settings;
                 const section = yield section_1.default.create(sanitated);
                 if (section) {
@@ -91,6 +100,9 @@ class SectionController {
             }
             catch (err) {
                 console.log(err);
+                res.status(500).send({
+                    message: "internal error",
+                });
             }
         });
     }
@@ -135,6 +147,40 @@ class SectionController {
             catch (err) {
                 console.log(err);
                 res.send({
+                    message: "internal error",
+                });
+            }
+        });
+    }
+    static update(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const data = req.body;
+            const typeSection = req.body.typeSection;
+            try {
+                const section = yield SectionController.getById(id);
+                if (!section)
+                    return res.status(404).send({
+                        message: "section not found it",
+                    });
+                let newData;
+                try {
+                    newData = SectionController.validate(typeSection, data);
+                }
+                catch (err) {
+                    const { message } = err;
+                    return res.status(400).send({
+                        message: message,
+                    });
+                }
+                yield section_1.default.update(newData, section);
+                return res.status(204).send({
+                    message: `${section.title} was successfully updated`
+                });
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).send({
                     message: "internal error",
                 });
             }

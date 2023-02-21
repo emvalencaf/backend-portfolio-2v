@@ -9,7 +9,7 @@ export interface ISectionDocument extends Document{
     backgroundImg?: string;
     icon?: string;
     createdAt?: Date;
-    updatedAt?: Date | null;
+    updatedAt?: Date | number | null;
     biosData?: IBiosData;
     urlDownload?: string;
     workData?: IWorkData;

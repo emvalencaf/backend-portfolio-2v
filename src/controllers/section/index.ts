@@ -70,7 +70,18 @@ export default class SectionController {
                 }
             }
 
-            const sanitated = SectionController.validate(typeSection, data);
+            let sanitated;
+
+            try{
+                
+                sanitated = SectionController.validate(typeSection, data);
+
+            } catch (err){
+                const { message } = err as Error;
+                return res.status(400).send({
+                    message: message,
+                });
+            }
 
             sanitated.settings = settings;
             const section = await SectionRepository.create(sanitated);
@@ -92,10 +103,15 @@ export default class SectionController {
 
         } catch (err) {
             console.log(err);
+
+            res.status(500).send({
+                message: "internal error",
+            });
         }
     }
 
     static async getById(id: string) {
+
         const section = await SectionRepository.getById(id);
 
         return section;
@@ -152,6 +168,48 @@ export default class SectionController {
 
         }
 
+    }
+
+    static async update(req: Request, res: Response) {
+        const { id } = req.params;
+        
+        const data = req.body;
+
+        const typeSection: "home" | "about" | "projects" | "other" | "skills" = req.body.typeSection;
+
+        try{
+
+            const section = await SectionController.getById(id);
+
+            if (!section) return res.status(404).send({
+                message: "section not found it",
+            });
+
+            let newData: ISection | IHomeSection | ISkillsSection | IProjectsSection | IAboutSection;
+            
+            try{
+                
+                newData = SectionController.validate(typeSection, data);
+
+            } catch (err) {
+                const { message } = err as Error;
+                return res.status(400).send({
+                    message: message,
+                });
+            }
+
+            await SectionRepository.update(newData, section);
+
+            return res.status(204).send({
+                message: `${section.title} was successfully updated`
+            });
+
+        } catch(err) {
+            console.log(err);
+            res.status(500).send({
+                message: "internal error",
+            });
+        }
     }
 
     static validate(typeSection: string, data: ICreateSectionData): IHomeSection | IAboutSection | ISkillsSection | IProjectsSection | ISection {
