@@ -208,29 +208,40 @@ export default class UserController {
             message: "you must sent an password to login an user"
         });
 
-        const user = await UserController.findUser({ name, email }, true);
+        try{
 
-        if (!user) return res.status(404).send({
-            message: "there is no user with this name or email"
-        });
+            const user = await UserController.findUser({ name, email }, true);
+    
+            if (!user) return res.status(404).send({
+                message: "there is no user with this name or email"
+            });
+    
+            // compare password
+            if (! await CryptPassword.comparePassword(password, user.password)) return res.status(400).send({
+                message: "you must sent a valid password"
+            });
+    
+            // get token
+            const token = Auth.generateToken(user._id.toString());
+    
+            // return user data
+            res.status(200).json({
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                },
+                jwt: token,
+            });
 
-        // compare password
-        if (! await CryptPassword.comparePassword(password, user.password)) return res.status(400).send({
-            message: "you must sent a valid password"
-        });
+            return;
+        } catch(err){
+            console.log(err);
+            res.status(500).send({
+                message: "internal error",
+            });
+        }
 
-        // get token
-        const token = Auth.generateToken(user._id.toString());
-
-        // return user data
-        res.status(200).json({
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-            },
-            jwt: token,
-        });
     }
 
     // find an user by email or name
