@@ -29,7 +29,7 @@ export default class SectionController {
 
             const { id } = req.user;
 
-            const owner = await UserController.getById(res, id, false);
+            const owner = await UserController.getById(id, false);
 
             if (!data.settings) return res.status(400).send({
                 message: "you must choose a setting to attached a section"

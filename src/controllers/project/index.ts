@@ -69,7 +69,7 @@ export default class ProjectController {
 
         const { id } = req.user;
 
-        const owner = await UserController.getById(res, id, false);
+        const owner = await UserController.getById(id, false);
 
         if (!owner) return res.status(404).send({
             message: "user not found it"

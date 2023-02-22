@@ -55,7 +55,7 @@ export default class Auth{
         try {
             const verified = Auth.verifyToken(token);
 
-            const user = await UserController.getById(res, verified?.id);
+            const user = await UserController.getById(verified?.id);
 
             if (!user) return res.status(404).send({
                 message: "error 404: user not found"
