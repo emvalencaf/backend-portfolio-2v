@@ -55,7 +55,7 @@ export default class UserController{
         // get user's data by the authGuard
         const { id } = req.user;
 
-        const user = await UserController.getById(res, id, true);
+        const user = await UserController.getById(id, true);
 
         if (!user) return res.status(404).send({
             message: "user not found"
@@ -76,13 +76,16 @@ export default class UserController{
 
             res.status(200).send({
                 message: "a new user password was successfully saved"
-            })
+            });
+
+            return;
 
         } catch(err) {
             console.log(`[server]: error`, err);
             res.status(500).send({
                 message: "internal error"
             });
+            return;
         }
 
     }
@@ -134,6 +137,8 @@ export default class UserController{
                     name: data.name,
                     email: data.email,
                 });
+
+                return;
             };
 
         }catch(e) {
@@ -141,25 +146,16 @@ export default class UserController{
             res.status(500).send({
                 message:"internal error in our server"
             });
+
+            return;
         }
     };
     // get an user by id
-    static async getById(res: Response, id: string, showPassword: boolean = false) {
+    static async getById(id: string, showPassword: boolean = false) {
         
         if (!id) return false;
 
-        try {
-
-            return await UserRepository.getById(id, showPassword);
-
-        }catch(err) {
-            
-            console.log(`[server]: user's id ${id} not found it`);
-
-            res.status(404).send({
-                message: "user not found it",
-            });
-        }
+        return await UserRepository.getById(id, showPassword);
     }
 
     // get an user by params id
@@ -167,7 +163,11 @@ export default class UserController{
         
         const { id } = req.params;
 
-        const user = await UserController.getById(res, id, false);
+        const user = await UserController.getById(id, false);
+
+        if (!user) return res.status(404).send({
+            message: "user not found it",
+        });
 
         res.status(200).send({
             user
@@ -184,7 +184,7 @@ export default class UserController{
 
         const { id } = req.user;
 
-        const user = await UserController.getById(res, id, false);
+        const user = await UserController.getById(id, false);
 
         if (!user) return false;
 
