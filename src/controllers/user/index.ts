@@ -154,8 +154,15 @@ export default class UserController {
     static async getById(id: string, showPassword: boolean = false) {
 
         if (!id) return false;
+        
+        try{
 
-        return await UserRepository.getById(id, showPassword);
+            return await UserRepository.getById(id, showPassword);
+
+        } catch(err) {
+            console.log(err);
+            throw new Error();
+        }
     }
 
     // get an user by params id

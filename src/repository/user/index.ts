@@ -26,28 +26,11 @@ export default class UserRepository {
 
             return UserModel.create(userData);
         } catch (err) {
-            console.log(`[server]: `,err);
+            console.log(`[server]: error: `,err);
+            throw new Error();
         }
 
     }
-
-
-    // log in an user
-    static async logIn(req: Request, res: Response) {
-        
-        const { email, name, password } = req.body;
-
-        if (!email && !name) return res.status(400).send({
-            message: "error 400: bad request you must sent an email or username"
-        });
-
-        if (!password) return res.status(400).send({
-            message: "error 400: bad request you must sent a password"
-        });
-        
-
-    }
-
 
     // update an user
     static async updateUserData(dataUser: IUser, newData: UserData) {
