@@ -11,11 +11,11 @@ import CryptPassword from "../../utils/CryptPassword";
 
 // type
 
-export default class UserController{
+export default class UserController {
 
     // get current user
     static async getCurrentUser(req: Request, res: Response) {
-        
+
         const user = req.user;
         const token = req.token;
 
@@ -60,13 +60,13 @@ export default class UserController{
         if (!user) return res.status(404).send({
             message: "user not found"
         });
-        
+
         // check password
         if (! await CryptPassword.comparePassword(password, user.password)) return res.status(400).send({
             message: "you must confirm your currently password"
         });
 
-        try{
+        try {
 
             await UserRepository.updateUserData(user, {
                 email: "",
@@ -80,7 +80,7 @@ export default class UserController{
 
             return;
 
-        } catch(err) {
+        } catch (err) {
             console.log(`[server]: error`, err);
             res.status(500).send({
                 message: "internal error"
@@ -92,8 +92,8 @@ export default class UserController{
 
     // register a new user and sign in
     static async register(req: Request, res: Response) {
-      
-        if(!req.body) return res.status(400).send({ message: "you've sent a empety data" });
+
+        if (!req.body) return res.status(400).send({ message: "you've sent a empety data" });
 
         const { name, password, email } = req.body;
 
@@ -102,7 +102,7 @@ export default class UserController{
             !password ||
             !email
         ) return res.status(400).send({
-            message:"you've sent a required field empety"
+            message: "you've sent a required field empety"
         });
 
         if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) return res.status(400).send({
@@ -124,8 +124,8 @@ export default class UserController{
             password: password.toString(),
         };
 
-        try{
-            
+        try {
+
             const data = await UserRepository.register(newUser);
 
             if (data) {
@@ -141,10 +141,10 @@ export default class UserController{
                 return;
             };
 
-        }catch(e) {
-            
+        } catch (e) {
+
             res.status(500).send({
-                message:"internal error in our server"
+                message: "internal error in our server"
             });
 
             return;
@@ -152,7 +152,7 @@ export default class UserController{
     };
     // get an user by id
     static async getById(id: string, showPassword: boolean = false) {
-        
+
         if (!id) return false;
 
         return await UserRepository.getById(id, showPassword);
@@ -160,7 +160,7 @@ export default class UserController{
 
     // get an user by params id
     static async getByParams(req: Request, res: Response) {
-        
+
         const { id } = req.params;
 
         const user = await UserController.getById(id, false);
@@ -197,14 +197,14 @@ export default class UserController{
 
     // log in an user
     static async login(req: Request, res: Response) {
-        
+
         const { name, email, password } = req.body;
 
-        if ( !name && !email ) return res.status(400).send({
+        if (!name && !email) return res.status(400).send({
             message: "you must sent an email or name to login an user"
         });
 
-        if ( !password ) return res.status(400).send({
+        if (!password) return res.status(400).send({
             message: "you must sent an password to login an user"
         });
 
@@ -236,18 +236,10 @@ export default class UserController{
     // find an user by email or name
     static async findUser({ email, name }: FindUserParams, showPassword: boolean = false) {
 
-        try {
-            
-            return await UserRepository.findUser({
-                email,
-                name
-            }, showPassword);
+        return await UserRepository.findUser({
+            email,
+            name
+        }, showPassword);
 
-        } catch(err) {
-            
-            console.log("[server]: error:", err);
-            
-            return null;
-        }
     }
 }
