@@ -12,7 +12,7 @@ const main = async () => {
 
         // open the server in the PORT
         app.listen(PORT, () => {
-            console.log(`[server]: Server is running at http://localhost:${PORT}`);
+            console.log(`[server]: Server is running`);
         });
 
     } catch (e) {
