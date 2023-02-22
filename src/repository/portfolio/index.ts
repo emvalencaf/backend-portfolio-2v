@@ -29,6 +29,11 @@ export default class PortfolioRepository{
             {
                 path: "settings",
                 model: "Settings",
+                populate: {
+                    path: "owner",
+                    model: "User",
+                    select: "name _id email",
+                }
             },
             {
                 path: "content",

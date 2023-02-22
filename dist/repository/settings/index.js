@@ -21,12 +21,20 @@ class SettingsRepository {
     }
     static find() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield settings_1.default.find({});
+            return yield settings_1.default.find({}).populate({
+                path: "owner",
+                model: "User",
+                select: "name _id email",
+            });
         });
     }
     static getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield settings_1.default.findById(id);
+            return yield settings_1.default.findById(id).populate({
+                path: "owner",
+                model: "User",
+                select: "name _id email",
+            });
         });
     }
 }

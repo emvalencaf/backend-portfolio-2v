@@ -39,13 +39,21 @@ export default class SettingsRepository {
 
     static async find(){
 
-        return await SettingsModel.find({});
+        return await SettingsModel.find({}).populate({
+            path: "owner",
+            model: "User",
+            select: "name _id email",
+        });
 
     }
 
     static async getById(id: string){
 
-        return await SettingsModel.findById(id);
+        return await SettingsModel.findById(id).populate({
+            path: "owner",
+            model: "User",
+            select: "name _id email",
+        });
         
     }
 }
