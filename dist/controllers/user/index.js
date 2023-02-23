@@ -185,6 +185,7 @@ class UserController {
     static login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, email, password } = req.body;
+            console.log("get name, email, password from req.body: ", name, " | ", email, " | ", password);
             if (!name && !email)
                 return res.status(400).send({
                     message: "you must sent an email or name to login an user"
@@ -193,24 +194,25 @@ class UserController {
                 return res.status(400).send({
                     message: "you must sent an password to login an user"
                 });
+            console.log("validate the request to the backend");
             try {
+                console.log("enter in the try-catch block");
+                console.log("finding a user in the collection by the name or email sent in request");
                 const user = yield UserController.findUser({ name, email }, true);
-                console.log("got an user");
                 if (!user)
                     return res.status(404).send({
                         message: "there is no user with this name or email"
                     });
-                console.log("will check the passwords");
+                console.log("got an user");
                 // compare password
                 if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
                     return res.status(400).send({
                         message: "you must sent a valid password"
                     });
-                console.log("will transform objectID into string");
-                const _id = user._id.toString();
-                console.log("will generate a token ");
+                console.log("validate the details of the user fetched: ", user);
                 // get token
-                const token = auth_1.default.generateToken(_id);
+                const token = auth_1.default.generateToken(user._id.toString());
+                console.log("got a token of an user", token);
                 // return user data
                 res.status(200).json({
                     user: {
