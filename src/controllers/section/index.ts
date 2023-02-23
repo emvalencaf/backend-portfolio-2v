@@ -21,7 +21,7 @@ export default class SectionController {
     static async create(req: Request, res: Response) {
 
         try {
-            // get the type by params
+            // get the type of section to be created by params
             const { typeSection } = req.params;
             const data = req.body;
 
@@ -31,16 +31,19 @@ export default class SectionController {
 
             const owner = await UserController.getById(id, false);
 
+            // it will check if there's a settings attached (by an id) in the body of the request
             if (!data.settings) return res.status(400).send({
                 message: "you must choose a setting to attached a section"
             });
 
             const settings = await SettingsController.getById(data.settings);
 
+            // it will check if the settings attached in the body's request is a valid one
             if (!settings) return res.status(404).send({
                 message: "settings not found it"
             });
 
+            // each setting can only have one section of each seciton type 
             if (settings?.menu) {
                 let isThereAMenuLink: boolean = false;
 
@@ -55,37 +58,42 @@ export default class SectionController {
 
             if (owner) data.owner = owner.name;
 
+            // it will check the files attached to the request body (only home and about section has files)
             if (typeSection === "home" || typeSection === "about") {
-                console.log("check home or about section images");
+                
                 if (!req.files) return res.status(400).send({
                     message: `you must upload a image for ${typeSection === "home" ? "the background" : "your profile"}`,
                 })
-
                 
-                const files = req.files as { [fieldname: string]: Express.Multer.File[] };;
-                
-                if (typeSection === "home" && !files["backgroundImg"]) return res.status(400).send({
-                    message: `you must upload a background image`,
-                });
+                const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-                if (typeSection === "home") {data.backgroundImg = files["backgroundImg"][0]?.path;}
+                if (typeSection === "home") {
 
-                data.biosData = JSON.parse(data.biosData);
+                    if (!files["backgroundImg"] || files["backgroundImg"].length === 0) return res.status(400).send({
+                        message: `you must upload a background image`,
+                    });
 
-                if (typeSection === "about" && !files["picture"]) return res.status(400).send({
-                    message: `you must upload a profile picture`,
-                });
+                    data.backgroundImg = files["backgroundImg"][0].path;
 
-                if (typeSection === "about") {
-                    data.biosData.profilePhoto.srcImg = files["picture"][0]?.path;
-                    data.biosData.profilePhoto.altText = `profile picture`;
+                } else if (typeSection === "about") {
+
+                    if (!files["picture"] || files["picture"].length === 0) return res.status(400).send({
+                        message: "you must upload a profile picture",
+                    });
+
+                    data.biosData = JSON.parse(data.biosData);
+                    data.biosData.profilePhoto.srcImg = files["picture"][0].path;
+                    
                 }
+                
             }
 
             let sanitated;
 
+            // it will validate the request body
             try{
                 
+                // the method validate will throw an error telling what is wrong in the request body that will be catched and will be sent to the client
                 sanitated = SectionController.validate(typeSection, data);
 
             } catch (err){
@@ -94,7 +102,7 @@ export default class SectionController {
                     message: message,
                 });
             }
-
+            
             sanitated.settings = settings;
             const section = await SectionRepository.create(sanitated);
 
