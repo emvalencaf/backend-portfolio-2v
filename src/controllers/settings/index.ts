@@ -67,7 +67,7 @@ export default class SettingsController {
             const newData = {
                 owner,
                 websiteName,
-                favIcon,
+                favIcon: data.favIcon,
                 logo: data.logo,
                 socialMedia: data.socialMedia,
             };
