@@ -24,7 +24,7 @@ export default class SettingsController {
             let files;
             if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-            if (!files || files["favIcon"][0].originalname.match(/\.(ico)$/)) return res.status(400).send({
+            if (!files || !files["favIcon"] || files["favIcon"][0].originalname.match(/\.(ico)$/)) return res.status(400).send({
                 message: "the favicon must be in .ico file",
             });
 
