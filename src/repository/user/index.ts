@@ -52,8 +52,14 @@ export default class UserRepository {
 
     // get an user by id
     static getById(id: string, showPassword: boolean = false) {
+
+        try{
+            return showPassword ? UserModel.findById(id).populate("projects") : UserModel.findById(id).select('-password').populate("projects");
+
+        } catch(err) {
+            console.log(err);
+        }
     
-        return showPassword ? UserModel.findById(id).populate("projects") : UserModel.findById(id).select('-password').populate("projects");
     }
 
     // get an user by name
