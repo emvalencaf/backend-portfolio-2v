@@ -45,7 +45,7 @@ class Auth {
             // check if token is valid
             try {
                 const verified = Auth.verifyToken(token);
-                const user = yield user_1.default.getById(res, verified === null || verified === void 0 ? void 0 : verified.id);
+                const user = yield user_1.default.getById(verified === null || verified === void 0 ? void 0 : verified.id);
                 if (!user)
                     return res.status(404).send({
                         message: "error 404: user not found"

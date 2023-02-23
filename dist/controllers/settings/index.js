@@ -61,7 +61,7 @@ class SettingsController {
                     message: "error 400: bad request you must fill the altText and link fields"
                 });
             const { id } = req.user;
-            const owner = yield user_1.default.getById(res, id, false);
+            const owner = yield user_1.default.getById(id, false);
             if (!owner)
                 return res.status(404).send({
                     message: "user not found it"

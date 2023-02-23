@@ -23,7 +23,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, connect_1.default)();
         // open the server in the PORT
         app_1.default.listen(PORT, () => {
-            console.log(`[server]: Server is running at http://localhost:${PORT}`);
+            console.log(`[server]: Server is running`);
         });
     }
     catch (e) {

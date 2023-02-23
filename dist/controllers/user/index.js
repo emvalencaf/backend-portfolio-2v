@@ -53,7 +53,7 @@ class UserController {
                 });
             // get user's data by the authGuard
             const { id } = req.user;
-            const user = yield UserController.getById(res, id, true);
+            const user = yield UserController.getById(id, true);
             if (!user)
                 return res.status(404).send({
                     message: "user not found"
@@ -72,12 +72,14 @@ class UserController {
                 res.status(200).send({
                     message: "a new user password was successfully saved"
                 });
+                return;
             }
             catch (err) {
                 console.log(`[server]: error`, err);
                 res.status(500).send({
                     message: "internal error"
                 });
+                return;
             }
         });
     }
@@ -120,6 +122,7 @@ class UserController {
                         name: data.name,
                         email: data.email,
                     });
+                    return;
                 }
                 ;
             }
@@ -127,12 +130,13 @@ class UserController {
                 res.status(500).send({
                     message: "internal error in our server"
                 });
+                return;
             }
         });
     }
     ;
     // get an user by id
-    static getById(res, id, showPassword = false) {
+    static getById(id, showPassword = false) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!id)
                 return false;
@@ -140,10 +144,8 @@ class UserController {
                 return yield user_1.default.getById(id, showPassword);
             }
             catch (err) {
-                console.log(`[server]: user's id ${id} not found it`);
-                res.status(404).send({
-                    message: "user not found it",
-                });
+                console.log(err);
+                throw new Error();
             }
         });
     }
@@ -151,7 +153,11 @@ class UserController {
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const user = yield UserController.getById(res, id, false);
+            const user = yield UserController.getById(id, false);
+            if (!user)
+                return res.status(404).send({
+                    message: "user not found it",
+                });
             res.status(200).send({
                 user
             });
@@ -165,7 +171,7 @@ class UserController {
                     message: "internal error"
                 });
             const { id } = req.user;
-            const user = yield UserController.getById(res, id, false);
+            const user = yield UserController.getById(id, false);
             if (!user)
                 return false;
             const { projects } = user;
@@ -187,42 +193,50 @@ class UserController {
                 return res.status(400).send({
                     message: "you must sent an password to login an user"
                 });
-            const user = yield UserController.findUser({ name, email }, true);
-            if (!user)
-                return res.status(404).send({
-                    message: "there is no user with this name or email"
+            try {
+                const user = yield UserController.findUser({ name, email }, true);
+                console.log("got an user");
+                if (!user)
+                    return res.status(404).send({
+                        message: "there is no user with this name or email"
+                    });
+                console.log("will check the passwords");
+                // compare password
+                if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
+                    return res.status(400).send({
+                        message: "you must sent a valid password"
+                    });
+                console.log("will transform objectID into string");
+                const _id = user._id.toString();
+                console.log("will generate a token ");
+                // get token
+                const token = auth_1.default.generateToken(_id);
+                // return user data
+                res.status(200).json({
+                    user: {
+                        id: user._id,
+                        name: user.name,
+                        email: user.email,
+                    },
+                    jwt: token,
                 });
-            // compare password
-            if (!(yield CryptPassword_1.default.comparePassword(password, user.password)))
-                return res.status(400).send({
-                    message: "you must sent a valid password"
+                return;
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).send({
+                    message: "internal error",
                 });
-            // get token
-            const token = auth_1.default.generateToken(user._id.toString());
-            // return user data
-            res.status(200).json({
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                },
-                jwt: token,
-            });
+            }
         });
     }
     // find an user by email or name
     static findUser({ email, name }, showPassword = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield user_1.default.findUser({
-                    email,
-                    name
-                }, showPassword);
-            }
-            catch (err) {
-                console.log("[server]: error:", err);
-                return null;
-            }
+            return yield user_1.default.findUser({
+                email,
+                name
+            }, showPassword);
         });
     }
 }

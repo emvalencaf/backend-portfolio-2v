@@ -34,7 +34,7 @@ class SectionController {
                 if (!req.user)
                     return;
                 const { id } = req.user;
-                const owner = yield user_1.default.getById(res, id, false);
+                const owner = yield user_1.default.getById(id, false);
                 if (!data.settings)
                     return res.status(400).send({
                         message: "you must choose a setting to attached a section"

@@ -26,22 +26,9 @@ class UserRepository {
                 return user_1.default.create(userData);
             }
             catch (err) {
-                console.log(`[server]: `, err);
+                console.log(`[server]: error: `, err);
+                throw new Error();
             }
-        });
-    }
-    // log in an user
-    static logIn(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { email, name, password } = req.body;
-            if (!email && !name)
-                return res.status(400).send({
-                    message: "error 400: bad request you must sent an email or username"
-                });
-            if (!password)
-                return res.status(400).send({
-                    message: "error 400: bad request you must sent a password"
-                });
         });
     }
     // update an user

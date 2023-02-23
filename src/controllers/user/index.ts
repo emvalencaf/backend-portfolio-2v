@@ -216,20 +216,22 @@ export default class UserController {
         });
 
         try{
-
+            
             const user = await UserController.findUser({ name, email }, true);
-    
+            console.log("got an user");
             if (!user) return res.status(404).send({
                 message: "there is no user with this name or email"
             });
-    
+            console.log("will check the passwords");
             // compare password
             if (! await CryptPassword.comparePassword(password, user.password)) return res.status(400).send({
                 message: "you must sent a valid password"
             });
-    
+            console.log("will transform objectID into string");
+            const _id = user._id.toString();
+            console.log("will generate a token ");
             // get token
-            const token = Auth.generateToken(user._id.toString());
+            const token = Auth.generateToken(_id);
     
             // return user data
             res.status(200).json({
