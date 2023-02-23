@@ -8,7 +8,7 @@ type Menu = Pick<ISettings, "menu">;
 
 export default class SettingsController {
     static async create(req: Request, res: Response) {
-        const { websiteName, favIcon, logo, menu, socialMedia } = req.body;
+        const { websiteName, favIcon, logo, socialMedia } = req.body;
 
         // user validation
         if (!req.user) return res.status(403).send({
@@ -18,6 +18,10 @@ export default class SettingsController {
         // validations        
         if (!websiteName) return res.status(400).send({
             message: "you must fill a name for your portfolio"
+        });
+        
+        if (!logo) return res.status(400).send({
+            message: "you must fill a logo",
         });
 
         try {
@@ -35,7 +39,8 @@ export default class SettingsController {
                 socialMedia: socialMedia && JSON.parse(socialMedia) || {},
             };
 
-            data.logo.srcImg = files["logoIcon"][0]?.path;
+            if (files["logoImg"]) data.logo.srcImg = files["logoImg"][0]?.path;
+
             data.favIcon = files["favIcon"][0]?.path;
 
             if (!data.favIcon) return res.status(400).send({
@@ -44,11 +49,11 @@ export default class SettingsController {
 
             // logo validation
             if (!data.logo) return res.status(400).send({
-                message: "error 400: bad request you must fill logo fields"
+                message: "you must fill logo fields"
             });
 
             if (!data.logo?.altText || !data.logo?.link) return res.status(400).send({
-                message: "error 400: bad request you must fill the altText and link fields"
+                message: "you must fill the altText and link fields"
             });
 
 
