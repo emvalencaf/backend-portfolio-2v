@@ -59,23 +59,23 @@ export default class ProjectController {
             message: "you must not exceed 50 chracters for your project title"
         });
 
-        if (!req.file) return res.status(400).send({
-            message: "you must upload at least one photo for your project"
-        })
-
-        const { path } = req.file;
-
-        const srcImg = path ? path : "";
-
-        const { id } = req.user;
-
-        const owner = await UserController.getById(id, false);
-
-        if (!owner) return res.status(404).send({
-            message: "user not found it"
-        });
 
         try {
+            if (!req.file) return res.status(400).send({
+                message: "you must upload at least one photo for your project"
+            })
+
+            const { path } = req.file;
+
+            const srcImg = path ? path : "";
+
+            const { id } = req.user;
+
+            const owner = await UserController.getById(id, false);
+
+            if (!owner) return res.status(404).send({
+                message: "user not found it"
+            });
 
             const data = {
                 owner,
@@ -112,56 +112,57 @@ export default class ProjectController {
     // update a project
     static async update(req: Request, res: Response) {
         const { id } = req.params;
+        try {
 
-        const project = await ProjectController.getById(id);
+            const project = await ProjectController.getById(id);
 
-        if (!project) return res.status(404).send({
-            message: "project not found it",
-        });
+            if (!project) return res.status(404).send({
+                message: "project not found it",
+            });
 
-        const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
+            const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
 
-        if (!title) return res.status(404).send({
-            message: "you must fill a title field for your project"
-        });
+            if (!title) return res.status(404).send({
+                message: "you must fill a title field for your project"
+            });
 
-        if (!resume) return res.status(400).send({
-            message: "you must fill a resume field of your project"
-        });
+            if (!resume) return res.status(400).send({
+                message: "you must fill a resume field of your project"
+            });
 
-        if (!description) return res.status(400).send({
-            message: "you must fill a description field of your project"
-        });
+            if (!description) return res.status(400).send({
+                message: "you must fill a description field of your project"
+            });
 
-        if (!mainLang) return res.status(400).send({
-            message: "you must fill a main language field of your project"
-        });
+            if (!mainLang) return res.status(400).send({
+                message: "you must fill a main language field of your project"
+            });
 
-        if (!urlDemo) return res.status(400).send({
-            message: "you must fill an url of your project demo"
-        });
+            if (!urlDemo) return res.status(400).send({
+                message: "you must fill an url of your project demo"
+            });
 
-        if (!urlRepository) return res.status(400).send({
-            message: "you must fill an url of your project demo"
-        });
+            if (!urlRepository) return res.status(400).send({
+                message: "you must fill an url of your project demo"
+            });
 
-        if (resume.length > 250) return res.status(400).send({
-            message: "you must not exceed 250 characters to resume your project"
-        });
+            if (resume.length > 250) return res.status(400).send({
+                message: "you must not exceed 250 characters to resume your project"
+            });
 
-        if (resume.length > 50) return res.status(400).send({
-            message: "you must not exceed 50 chracters for your project title"
-        });
+            if (resume.length > 50) return res.status(400).send({
+                message: "you must not exceed 50 chracters for your project title"
+            });
 
-        if (!req.file) return res.status(400).send({
-            message: "you must upload at least one photo for your project"
-        })
 
-        const { path } = req.file;
 
-        const srcImg = path ? path : "";
+            if (!req.file) return res.status(400).send({
+                message: "you must upload at least one photo for your project"
+            })
 
-        try{
+            const { path } = req.file;
+
+            const srcImg = path ? path : "";
 
             const data: CreateDataParamsProject = {
                 title,
@@ -182,7 +183,7 @@ export default class ProjectController {
 
             return;
 
-        } catch(err){
+        } catch (err) {
             console.log("[server] : error : ", err);
             res.status(500).send({
                 message: "internal error",
@@ -198,6 +199,10 @@ export default class ProjectController {
         try {
 
             const projects = await ProjectRepository.find();
+
+            if (projects.length === 0) return res.status(404).send({
+                message: "no project was found it",
+            })
 
             res.status(200).send(projects);
 

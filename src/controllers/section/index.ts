@@ -61,11 +61,21 @@ export default class SectionController {
                     message: `you must upload a image for ${typeSection === "home" ? "the background" : "your profile"}`,
                 })
 
+                
                 const files = req.files as { [fieldname: string]: Express.Multer.File[] };;
+                
+                if (typeSection === "home" && !files["backgroundImg"]) return res.status(400).send({
+                    message: `you must upload a background image`,
+                });
 
-                if (typeSection === "home") data.backgroundImg = files["backgroundImg"][0]?.path;
+                if (typeSection === "home") {data.backgroundImg = files["backgroundImg"][0]?.path;}
 
                 data.biosData = JSON.parse(data.biosData);
+
+                if (typeSection === "about" && !files["picture"]) return res.status(400).send({
+                    message: `you must upload a profile picture`,
+                });
+
                 if (typeSection === "about") {
                     data.biosData.profilePhoto.srcImg = files["picture"][0]?.path;
                     data.biosData.profilePhoto.altText = `profile picture`;
