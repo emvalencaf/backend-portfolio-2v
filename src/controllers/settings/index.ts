@@ -9,7 +9,7 @@ type Menu = Pick<ISettings, "menu">;
 export default class SettingsController {
     static async create(req: Request, res: Response) {
         const { websiteName, favIcon, logo, menu, socialMedia } = req.body;
-        
+
         // user validation
         if (!req.user) return res.status(403).send({
             message: "you must be logged in for create a new portfolio"
@@ -17,60 +17,57 @@ export default class SettingsController {
 
         // validations        
         if (!websiteName) return res.status(400).send({
-            message: "error 400: bad request you must fill a name for your portfolio"
+            message: "you must fill a name for your portfolio"
         });
 
-        const files = req.files as {[fieldname: string]: Express.Multer.File[]};;
+        try {
+            let files;
+            if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-        if (!files) return res.status(400).send({
-            message:"you must upload at least favicon",
-        });
+            if (!files || files["favIcon"][0].originalname.match(/\.(ico)$/)) return res.status(400).send({
+                message: "the favicon must be in .ico file",
+            });
 
-        if (!files || files["favIcon"][0].originalname.match(/\.(ico)$/)) return res.status(400).send({
-            message:"the favicon must be in .ico file",
-        });
+            const data = {
+                websiteName,
+                favIcon: files["favIcon"][0]?.path,
+                logo: JSON.parse(logo),
+                socialMedia: socialMedia && JSON.parse(socialMedia) || {},
+            };
 
-        const data = {
-            websiteName,
-            favIcon: files["favIcon"][0]?.path,
-            logo: JSON.parse(logo),
-            socialMedia: socialMedia && JSON.parse(socialMedia) || {},
-        };
-        
-        data.logo.srcImg = files["logoIcon"][0]?.path;
-        data.favIcon = files["favIcon"][0]?.path;
+            data.logo.srcImg = files["logoIcon"][0]?.path;
+            data.favIcon = files["favIcon"][0]?.path;
 
-        if (!data.favIcon) return res.status(400).send({
-            message: "you must choose a favicon for your portfolio"
-        });
-        
-        // logo validation
-        if (!data.logo) return res.status(400).send({
-            message: "error 400: bad request you must fill logo fields"
-        });
+            if (!data.favIcon) return res.status(400).send({
+                message: "you must choose a favicon for your portfolio"
+            });
 
-        if (!data.logo?.altText || !data.logo?.link) return res.status(400).send({
-            message: "error 400: bad request you must fill the altText and link fields"
-        });
-        
+            // logo validation
+            if (!data.logo) return res.status(400).send({
+                message: "error 400: bad request you must fill logo fields"
+            });
 
-        const { id } = req.user;
-        const owner = await UserController.getById(id, false);
+            if (!data.logo?.altText || !data.logo?.link) return res.status(400).send({
+                message: "error 400: bad request you must fill the altText and link fields"
+            });
 
-        if (!owner) return res.status(404).send({
-            message: "user not found it"
-        });
 
-        const newData = {
-            owner,
-            websiteName,
-            favIcon,
-            logo: data.logo,
-            socialMedia: data.socialMedia,
-        };
-        console.log(newData);
+            const { id } = req.user;
+            const owner = await UserController.getById(id, false);
 
-        try{
+            if (!owner) return res.status(404).send({
+                message: "user not found it"
+            });
+
+            const newData = {
+                owner,
+                websiteName,
+                favIcon,
+                logo: data.logo,
+                socialMedia: data.socialMedia,
+            };
+            console.log(newData);
+
 
             const settings = await SettingsRepository.create(newData);
 
@@ -78,7 +75,7 @@ export default class SettingsController {
 
             res.status(200).send(settings);
 
-        } catch(err) {
+        } catch (err) {
             console.log("[server]: error: ", err);
             res.status(500).send({
                 message: "internal error"
@@ -89,13 +86,13 @@ export default class SettingsController {
 
     static async getAllSettings(req: Request, res: Response) {
 
-        try{
+        try {
 
             const settings = await SettingsRepository.find();
 
             res.status(200).send(settings);
 
-        } catch(err){
+        } catch (err) {
             console.log(`[server]: error : ${err}`);
 
             res.status(500).send({
@@ -114,7 +111,7 @@ export default class SettingsController {
 
     static async getByParams(req: Request, res: Response) {
 
-        try{
+        try {
 
             if (req.params.id) {
 
@@ -131,8 +128,8 @@ export default class SettingsController {
                 })
             }
 
-        }catch(err) {
-            console.log("[server]: error: ",err);
+        } catch (err) {
+            console.log("[server]: error: ", err);
             res.status(500).send({
                 message: "internal error",
             })
