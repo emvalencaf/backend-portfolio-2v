@@ -92,10 +92,16 @@ export default class SettingsController {
     static async getAllSettings(req: Request, res: Response) {
 
         try {
-
+            console.log("enter in get all settings")
             const settings = await SettingsRepository.find();
 
+            if (!settings) return res.status(404).send({
+                message: "no settings were found it",
+            });
+
             res.status(200).send(settings);
+
+            return;
 
         } catch (err) {
             console.log(`[server]: error : ${err}`);
@@ -103,6 +109,8 @@ export default class SettingsController {
             res.status(500).send({
                 message: "error 500: internal error"
             });
+
+            return;
         }
 
     }
