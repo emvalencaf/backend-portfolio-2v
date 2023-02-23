@@ -206,7 +206,6 @@ export default class UserController {
     static async login(req: Request, res: Response) {
 
         const { name, email, password } = req.body;
-        console.log("get name, email, password from req.body: ", name, " | ", email, " | ", password);
 
         if (!name && !email) return res.status(400).send({
             message: "you must sent an email or name to login an user"
@@ -216,26 +215,21 @@ export default class UserController {
             message: "you must sent an password to login an user"
         });
 
-        console.log("validate the request to the backend");
-
         try{
-            console.log("enter in the try-catch block");
-            console.log("finding a user in the collection by the name or email sent in request");
             const user = await UserController.findUser({ name, email }, true);
 
             if (!user) return res.status(404).send({
                 message: "there is no user with this name or email"
             });
-            console.log("got an user");
+            
             // compare password
             if (! await CryptPassword.comparePassword(password, user.password)) return res.status(400).send({
                 message: "you must sent a valid password"
             });
-            
-            console.log("validate the details of the user fetched: ", user);            
+                   
             // get token
             const token = Auth.generateToken(user._id.toString());
-            console.log("got a token of an user", token);
+            
             // return user data
             res.status(200).json({
                 user: {

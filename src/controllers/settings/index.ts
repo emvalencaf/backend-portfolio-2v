@@ -36,9 +36,9 @@ export default class SettingsController {
             logo: JSON.parse(logo),
             socialMedia: socialMedia && JSON.parse(socialMedia) || {},
         };
-        data.logo.srcImg = files["favIcon"][0]?.path;
-
-        console.log(data);
+        
+        data.logo.srcImg = files["logoIcon"][0]?.path;
+        data.favIcon = files["favIcon"][0]?.path;
 
         if (!data.favIcon) return res.status(400).send({
             message: "you must choose a favicon for your portfolio"
