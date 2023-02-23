@@ -89,6 +89,7 @@ class UserController {
             if (!req.body)
                 return res.status(400).send({ message: "you've sent a empety data" });
             const { name, password, email } = req.body;
+            console.log("in register method");
             if (!name ||
                 !password ||
                 !email)
