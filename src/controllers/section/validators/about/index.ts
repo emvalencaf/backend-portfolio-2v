@@ -77,7 +77,7 @@ export default class AboutSectionValidator {
 
         if (!course.workTime) throw new Error(`your ${course.title} course dosen't have a work time`);
 
-        if (typeof course.workTime === "string") throw new Error(`your ${course.title} course has more than 50 characters`)
+        // if (typeof course.workTime === "string") throw new Error(`your ${course.title} course has more than 50 characters`)
 
     }
 
