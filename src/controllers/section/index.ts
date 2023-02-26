@@ -202,7 +202,7 @@ export default class SectionController {
         const typeSection: "home" | "about" | "projects" | "other" | "skills" = req.body.typeSection;
 
         try{
-
+            // getting section by id
             const section = await SectionController.getById(id);
 
             if (!section) return res.status(404).send({
@@ -210,9 +210,9 @@ export default class SectionController {
             });
 
             let newData: ISection | IHomeSection | ISkillsSection | IProjectsSection | IAboutSection;
-            
             try{
-                
+            
+                // it will validate de request body, if the field is invalid it will throw an error that will be catched
                 newData = SectionController.validate(typeSection, data);
 
             } catch (err) {

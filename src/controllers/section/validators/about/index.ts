@@ -63,7 +63,7 @@ export default class AboutSectionValidator {
     static validateCourseData(course: IEducation) {
         if (!course.title) throw new Error("one of yours courses doesn't have a title");
 
-        if (course.title.length > 50) throw new Error("one of your courses title has more than 150 characters");
+        if (course.title.length > 50) throw new Error("one of your courses title has more than 50 characters");
 
         if (!course.institution) throw new Error(`your ${course.title} course doesn't have an institution`);
 
@@ -71,7 +71,7 @@ export default class AboutSectionValidator {
 
         if (!course.resume) throw new Error(`your ${course.resume} course doesn't have a resume`);
 
-        if (course.resume.length > 250) throw new Error(`your ${course.resume} course has more than 250 characters`);
+        if (course.resume.length > 250) throw new Error(`your ${course.title} course has more than 250 characters`);
 
         if (!course.startIn) throw new Error(`your ${course.title} course doesn't have started date`);
 
