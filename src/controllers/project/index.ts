@@ -122,10 +122,9 @@ export default class ProjectController {
 
             const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
 
-            /*
             if (!title) return res.status(404).send({
                 message: "you must fill a title field for your project"
-            });*/
+            });
 
             if (!resume) return res.status(400).send({
                 message: "you must fill a resume field of your project"
@@ -150,11 +149,6 @@ export default class ProjectController {
             if (resume.length > 250) return res.status(400).send({
                 message: "you must not exceed 250 characters to resume your project"
             });
-
-            if (resume.length > 50) return res.status(400).send({
-                message: "you must not exceed 50 chracters for your project title"
-            });
-
 
 
             if (!req.file) return res.status(400).send({
