@@ -10,7 +10,7 @@ const educationSecheme = new mongoose.Schema<IEducation>({
     resume: { type: String || Number, required: true, trim: true, maxlength: 250 },
     startIn: { type: Date, required: true },
     endIn: { type: Date, required: false, default: null },
-    urlDownload: { type: String, required: true, trim: false },
+    urlDownload: { type: String, required: false, trim: false },
 })
 
 const educationDataScheme = new mongoose.Schema<IEducationData>({
