@@ -122,9 +122,10 @@ export default class ProjectController {
 
             const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
 
+            /*
             if (!title) return res.status(404).send({
                 message: "you must fill a title field for your project"
-            });
+            });*/
 
             if (!resume) return res.status(400).send({
                 message: "you must fill a resume field of your project"
