@@ -154,9 +154,9 @@ export default class SettingsController {
 
             if (id) {
 
-
                 const settings = SettingsController.getById(id);
-
+                console.log("in getByParams in id block id: ", id);
+                console.log("settings: ", settings);
                 if (!settings) return res.status(404).send({
                     message: "settings not found it",
                 });
