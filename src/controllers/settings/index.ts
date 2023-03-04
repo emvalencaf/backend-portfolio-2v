@@ -19,7 +19,7 @@ export default class SettingsController {
         if (!websiteName) return res.status(400).send({
             message: "you must fill a name for your portfolio"
         });
-        
+
         if (!logo) return res.status(400).send({
             message: "you must fill a logo",
         });
@@ -118,11 +118,13 @@ export default class SettingsController {
     static async update(req: Request, res: Response) {
         const { id } = req.params;
 
-        const { 
+        const {
             websiteName,
             socialMedia,
             logo
-         } = req.body;
+        } = req.body;
+
+
         // user validation
         if (!req.user) return res.status(403).send({
             message: "you must be logged in for create a new portfolio"
@@ -132,10 +134,77 @@ export default class SettingsController {
         if (!websiteName) return res.status(400).send({
             message: "you must fill a name for your portfolio"
         });
-        
+
         if (!logo) return res.status(400).send({
             message: "you must fill a logo",
         });
+
+        try {
+            const settings = await SettingsController.getById(id);
+
+            if (!settings) return res.status(404).send({
+                message: "settings was not found it",
+            });
+
+            let files;
+            if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+            if (!files || !files["favIcon"] || files["favIcon"][0].originalname.match(/\.(ico)$/)) return res.status(400).send({
+                message: "the favicon must be in .ico file",
+            });
+
+            const data = {
+                websiteName,
+                favIcon: files["favIcon"][0]?.path,
+                logo: JSON.parse(logo),
+                socialMedia: socialMedia && JSON.parse(socialMedia) || {},
+            };
+
+            if (files["logoImg"]) data.logo.srcImg = files["logoImg"][0]?.path;
+
+            data.favIcon = files["favIcon"][0]?.path;
+
+            if (!data.favIcon) return res.status(400).send({
+                message: "you must choose a favicon for your portfolio"
+            });
+
+            // logo validation
+            if (!data.logo) return res.status(400).send({
+                message: "you must fill logo fields"
+            });
+
+            if (!data.logo?.altText || !data.logo?.link) return res.status(400).send({
+                message: "you must fill the altText and link fields"
+            });
+
+
+            const { id: userId } = req.user;
+            const owner = await UserController.getById(userId, false);
+
+            if (!owner) return res.status(404).send({
+                message: "user not found it"
+            });
+
+            const newData = {
+                owner,
+                websiteName,
+                favIcon: data.favIcon,
+                logo: data.logo,
+                socialMedia: data.socialMedia,
+            };
+            console.log(newData);
+
+
+            await SettingsRepository.update(newData, settings);
+
+            res.status(200).send(settings);
+
+        } catch (err) {
+            console.log("[server]: error: ", err);
+            res.status(500).send({
+                message: "internal error"
+            });
+        }
 
     }
 
@@ -147,7 +216,7 @@ export default class SettingsController {
     }
 
     static async getByParams(req: Request, res: Response) {
-        
+
         const { id = "" } = req.params;
 
         try {

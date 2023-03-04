@@ -1,5 +1,6 @@
 import SettingsModel from "../../models/settings";
 import { IUser } from "../../models/user";
+import { ISettings } from "../../shared-type/settings";
 
 // types
 type CreateData = {
@@ -35,6 +36,16 @@ export default class SettingsRepository {
 
         return await SettingsModel.create(data);
 
+    }
+
+    static async update(data:CreateData, settings: ISettings) {
+        
+        settings.favIcon = data.favIcon;
+        settings.websiteName = data.websiteName;
+        settings.logo = data.logo;
+        settings.socialMedia = data.socialMedia;
+
+        await settings.save();
     }
 
     static async find(){
