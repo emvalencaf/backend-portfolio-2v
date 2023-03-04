@@ -13,6 +13,10 @@ import UploadImageMiddleware from "../../middlewares/uploadImage";
 const router: Router = express.Router();
 
 router.get("/", SettingsController.getAllSettings);
+router.get("/:id",
+    Auth.authGuard,
+    SettingsController.getByParams
+);
 router.post("/",
     Auth.authGuard,
     UploadImageMiddleware.uploader.fields([
