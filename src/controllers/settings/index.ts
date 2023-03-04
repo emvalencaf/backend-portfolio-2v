@@ -78,7 +78,7 @@ export default class SettingsController {
 
             settings.save();
 
-            res.status(200).send(settings);
+            res.status(200).send({settings});
 
         } catch (err) {
             console.log("[server]: error: ", err);
@@ -197,7 +197,9 @@ export default class SettingsController {
 
             await SettingsRepository.update(newData, settings);
 
-            res.status(200).send(settings);
+            res.status(200).send({
+                settings
+            });
 
         } catch (err) {
             console.log("[server]: error: ", err);
