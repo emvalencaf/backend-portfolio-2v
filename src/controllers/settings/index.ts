@@ -115,6 +115,30 @@ export default class SettingsController {
 
     }
 
+    static async update(req: Request, res: Response) {
+        const { id } = req.params;
+
+        const { 
+            websiteName,
+            socialMedia,
+            logo
+         } = req.body;
+        // user validation
+        if (!req.user) return res.status(403).send({
+            message: "you must be logged in for create a new portfolio"
+        });
+
+        // validations        
+        if (!websiteName) return res.status(400).send({
+            message: "you must fill a name for your portfolio"
+        });
+        
+        if (!logo) return res.status(400).send({
+            message: "you must fill a logo",
+        });
+
+    }
+
     static async getById(id: string) {
 
         const settings = await SettingsRepository.getById(id);
@@ -123,12 +147,13 @@ export default class SettingsController {
     }
 
     static async getByParams(req: Request, res: Response) {
+        
+        const { id = "" } = req.params;
 
         try {
 
-            if (req.params.id) {
+            if (id) {
 
-                const { id } = req.params;
 
                 const settings = SettingsController.getById(id);
 

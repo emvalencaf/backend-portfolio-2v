@@ -28,5 +28,16 @@ router.post("/",
         },
     ]),
     SettingsController.create);
+router.put("/:id",
+    Auth.authGuard,
+    UploadImageMiddleware.uploader.fields([
+        {
+            name: "favIcon", maxCount: 1,
+        },
+        {
+            name: "logoImg", maxCount: 1,
+        },
+    ]),
+    SettingsController.update);
 
 export { router as SettingsRouter };
