@@ -158,9 +158,7 @@ export default class SectionController {
                 message: "no sections were found it"
             });
 
-            return res.status(200).send({
-                sections
-            });
+            return res.status(200).send(sections);
 
         } catch (err) {
             console.log(err);
