@@ -33,6 +33,11 @@ router.put("/:id",
     SectionController.update,
 );
 
+router.get("/",
+    Auth.authGuard,
+    SectionController.getAll
+);
+
 router.get("/:id",
     Auth.authGuard,
     SectionController.getByParams,

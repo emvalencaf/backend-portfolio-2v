@@ -91,4 +91,8 @@ export default class SectionRepository{
             settings: settingsId,
         }).populate("projects");
     }
+
+    static async getAll() {
+        return await SectionModel.find({}).populate("projects");
+    }
 }

@@ -194,7 +194,7 @@ export default class ProjectController {
                 message: "no project was found it",
             })
 
-            res.status(200).send(projects);
+            res.status(200).send({projects});
 
         } catch (err) {
 

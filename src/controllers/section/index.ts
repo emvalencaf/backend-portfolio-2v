@@ -148,6 +148,29 @@ export default class SectionController {
 
     }
 
+    // get al by users id
+    static async getAll(req: Request, res: Response) {
+
+        try {
+            const sections = await SectionRepository.getAll();
+    
+            if (!sections) return res.status(404).send({
+                message: "no sections were found it"
+            });
+
+            return res.status(200).send({
+                sections
+            });
+
+        } catch (err) {
+            console.log(err);
+            res.status(501).send({
+                message: "internal error",
+            })
+            return;
+        }
+    }
+
     // a controller to callback getById or getAllBySettingsId
     static async getByParams(req: Request, res: Response) {
 
