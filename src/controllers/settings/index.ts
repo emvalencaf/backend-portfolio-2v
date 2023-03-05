@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { ISettings } from "../../shared-type/settings";
 import SettingsRepository from "../../repository/settings";
 import UserController from "../user";
+import HandleFile from "../../utils/handleFile";
 type Logo = Pick<ISettings, "logo">;
 type Menu = Pick<ISettings, "menu">;
 
@@ -34,14 +35,12 @@ export default class SettingsController {
 
             const data = {
                 websiteName,
-                favIcon: files["favIcon"][0]?.path,
+                favIcon: HandleFile.getUrlFromFile(files["favIcon"][0]),
                 logo: JSON.parse(logo),
                 socialMedia: socialMedia && JSON.parse(socialMedia) || {},
             };
 
-            if (files["logoImg"]) data.logo.srcImg = files["logoImg"][0]?.path;
-
-            data.favIcon = files["favIcon"][0]?.path;
+            if (files["logoImg"]) data.logo.srcImg = HandleFile.getUrlFromFile(files["logoImg"][0]);
 
             if (!data.favIcon) return res.status(400).send({
                 message: "you must choose a favicon for your portfolio"
@@ -147,22 +146,28 @@ export default class SettingsController {
             });
 
             let files;
-            if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
-
-            if (!files || !files["favIcon"] || files["favIcon"][0].originalname.match(/\.(ico)$/)) return res.status(400).send({
-                message: "the favicon must be in .ico file",
-            });
-
             const data = {
                 websiteName,
-                favIcon: files["favIcon"][0]?.path,
                 logo: JSON.parse(logo),
+                favIcon: settings.favIcon,
                 socialMedia: socialMedia && JSON.parse(socialMedia) || {},
             };
+            if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-            if (files["logoImg"]) data.logo.srcImg = files["logoImg"][0]?.path;
 
-            data.favIcon = files["favIcon"][0]?.path;
+            if (files) {
+                if ((
+                    !files["favIcon"] ||
+                    files["favIcon"][0].originalname.match(/\.(ico)$/)
+                    ) && !settings.favIcon) return res.status(400).send({
+                    message: "the favicon must be in .ico file",
+                });
+
+                data.favIcon = files["favIcon"][0]? HandleFile.getUrlFromFile(files["favIcon"][0]) : settings.favIcon;
+                
+                if (files["logoImg"]) data.logo.srcImg = files["logoImg"][0]? HandleFile.getUrlFromFile(files["logoImg"][0]) : settings.logo.srcImg;
+
+            }
 
             if (!data.favIcon) return res.status(400).send({
                 message: "you must choose a favicon for your portfolio"
@@ -226,8 +231,7 @@ export default class SettingsController {
             if (id) {
 
                 const settings = await SettingsController.getById(id);
-                console.log("in getByParams in id block id: ", id);
-                console.log("settings: ", settings);
+
                 if (!settings) return res.status(404).send({
                     message: "settings not found it",
                 });

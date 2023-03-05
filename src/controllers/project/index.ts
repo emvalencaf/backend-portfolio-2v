@@ -14,6 +14,9 @@ export type FindProjectsByParams = {
     userId?: string
 };
 
+// utils
+import HandleFile from "../../utils/handleFile";
+
 export default class ProjectController {
 
     // create a new project
@@ -61,9 +64,9 @@ export default class ProjectController {
                 message: "you must upload at least one photo for your project"
             })
 
-            const { path } = req.file;
+            // const { path } = req.file;
 
-            const srcImg = path ? path : "";
+            // const srcImg = path ? path : "";
 
             const { id } = req.user;
 
@@ -78,7 +81,7 @@ export default class ProjectController {
                 title,
                 resume,
                 description,
-                srcImg,
+                srcImg: HandleFile.getUrlFromFile(req.file),
                 mainLang,
                 urlDemo,
                 urlRepository,
@@ -147,20 +150,16 @@ export default class ProjectController {
             });
 
 
-            if (!req.file) return res.status(400).send({
+            if (!req.file && !project.srcImg) return res.status(400).send({
                 message: "you must upload at least one photo for your project"
             })
 
-            const { path } = req.file;
-
-            const srcImg = path ? path : "";
-
-            const data: CreateDataParamsProject = {
+            let data: CreateDataParamsProject = {
                 title,
                 resume,
                 description,
                 owner: project.owner,
-                srcImg,
+                srcImg: req.file? HandleFile.getUrlFromFile(req.file) : project.srcImg,
                 mainLang,
                 urlDemo,
                 urlRepository,
