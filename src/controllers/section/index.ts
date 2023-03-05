@@ -199,9 +199,7 @@ export default class SectionController {
                     message: "no section was found it",
                 });
 
-                return res.status(200).send({
-                    section,
-                })
+                return res.status(200).send(section)
             }
 
         } catch (err) {
