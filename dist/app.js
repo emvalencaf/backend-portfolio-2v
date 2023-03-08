@@ -17,7 +17,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 // solve CORS
 app.use((0, cors_1.default)({
     credentials: true,
-    origin: "http://localhost:3000"
+    origin: `${process.env.FRONTEND_URL}`
 }));
 // custom router
 const routes_1 = require("./routes");

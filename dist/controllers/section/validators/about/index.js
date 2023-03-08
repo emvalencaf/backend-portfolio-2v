@@ -51,7 +51,7 @@ class AboutSectionValidator {
         if (!course.title)
             throw new Error("one of yours courses doesn't have a title");
         if (course.title.length > 50)
-            throw new Error("one of your courses title has more than 150 characters");
+            throw new Error("one of your courses title has more than 50 characters");
         if (!course.institution)
             throw new Error(`your ${course.title} course doesn't have an institution`);
         if (course.institution.length > 50)
@@ -59,12 +59,12 @@ class AboutSectionValidator {
         if (!course.resume)
             throw new Error(`your ${course.resume} course doesn't have a resume`);
         if (course.resume.length > 250)
-            throw new Error(`your ${course.resume} course has more than 250 characters`);
+            throw new Error(`your ${course.title} course resume has more than 250 characters`);
         if (!course.startIn)
             throw new Error(`your ${course.title} course doesn't have started date`);
         if (!course.workTime)
             throw new Error(`your ${course.title} course dosen't have a work time`);
-        if (typeof course.workTime === "string")
+        if (typeof course.workTime === "string" && course.workTime.length > 50)
             throw new Error(`your ${course.title} course has more than 50 characters`);
     }
     static validateWorkData(work) {

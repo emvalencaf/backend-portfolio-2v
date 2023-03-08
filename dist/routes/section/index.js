@@ -24,5 +24,6 @@ router.post("/:typeSection", auth_1.default.authGuard, uploadImage_1.default.upl
     },
 ]), section_1.default.create);
 router.put("/:id", auth_1.default.authGuard, section_1.default.update);
+router.get("/", auth_1.default.authGuard, section_1.default.getAll);
 router.get("/:id", auth_1.default.authGuard, section_1.default.getByParams);
 router.get("/settings/:settingsId", auth_1.default.authGuard, section_1.default.getByParams);

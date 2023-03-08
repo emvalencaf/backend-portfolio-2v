@@ -14,11 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const settings_1 = __importDefault(require("../../repository/settings"));
 const user_1 = __importDefault(require("../user"));
+const handleFile_1 = __importDefault(require("../../utils/handleFile"));
 class SettingsController {
     static create(req, res) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const { websiteName, favIcon, logo, menu, socialMedia } = req.body;
+            const { websiteName, favIcon, logo, socialMedia } = req.body;
             // user validation
             if (!req.user)
                 return res.status(403).send({
@@ -27,57 +28,58 @@ class SettingsController {
             // validations        
             if (!websiteName)
                 return res.status(400).send({
-                    message: "error 400: bad request you must fill a name for your portfolio"
+                    message: "you must fill a name for your portfolio"
                 });
-            const files = req.files;
-            ;
-            if (!files)
+            if (!logo)
                 return res.status(400).send({
-                    message: "you must upload at least favicon",
+                    message: "you must fill a logo",
                 });
-            if (!files || files["favIcon"][0].originalname.match(/\.(ico)$/))
-                return res.status(400).send({
-                    message: "the favicon must be in .ico file",
-                });
-            const data = {
-                websiteName,
-                favIcon: (_a = files["favIcon"][0]) === null || _a === void 0 ? void 0 : _a.path,
-                logo: JSON.parse(logo),
-                socialMedia: socialMedia && JSON.parse(socialMedia) || {},
-            };
-            data.logo.srcImg = (_b = files["favIcon"][0]) === null || _b === void 0 ? void 0 : _b.path;
-            console.log(data);
-            if (!data.favIcon)
-                return res.status(400).send({
-                    message: "you must choose a favicon for your portfolio"
-                });
-            // logo validation
-            if (!data.logo)
-                return res.status(400).send({
-                    message: "error 400: bad request you must fill logo fields"
-                });
-            if (!((_c = data.logo) === null || _c === void 0 ? void 0 : _c.altText) || !((_d = data.logo) === null || _d === void 0 ? void 0 : _d.link))
-                return res.status(400).send({
-                    message: "error 400: bad request you must fill the altText and link fields"
-                });
-            const { id } = req.user;
-            const owner = yield user_1.default.getById(id, false);
-            if (!owner)
-                return res.status(404).send({
-                    message: "user not found it"
-                });
-            const newData = {
-                owner,
-                websiteName,
-                favIcon,
-                logo: data.logo,
-                socialMedia: data.socialMedia,
-            };
-            console.log(newData);
             try {
+                let files;
+                if (req.files)
+                    files = req.files;
+                if (!files || !files["favIcon"] || files["favIcon"][0].originalname.match(/\.(ico)$/))
+                    return res.status(400).send({
+                        message: "the favicon must be in .ico file",
+                    });
+                const data = {
+                    websiteName,
+                    favIcon: handleFile_1.default.getUrlFromFile(files["favIcon"][0]),
+                    logo: JSON.parse(logo),
+                    socialMedia: socialMedia && JSON.parse(socialMedia) || {},
+                };
+                if (files["logoImg"])
+                    data.logo.srcImg = handleFile_1.default.getUrlFromFile(files["logoImg"][0]);
+                if (!data.favIcon)
+                    return res.status(400).send({
+                        message: "you must choose a favicon for your portfolio"
+                    });
+                // logo validation
+                if (!data.logo)
+                    return res.status(400).send({
+                        message: "you must fill logo fields"
+                    });
+                if (!((_a = data.logo) === null || _a === void 0 ? void 0 : _a.altText) || !((_b = data.logo) === null || _b === void 0 ? void 0 : _b.link))
+                    return res.status(400).send({
+                        message: "you must fill the altText and link fields"
+                    });
+                const { id } = req.user;
+                const owner = yield user_1.default.getById(id, false);
+                if (!owner)
+                    return res.status(404).send({
+                        message: "user not found it"
+                    });
+                const newData = {
+                    owner,
+                    websiteName,
+                    favIcon: data.favIcon,
+                    logo: data.logo,
+                    socialMedia: data.socialMedia,
+                };
+                console.log(newData);
                 const settings = yield settings_1.default.create(newData);
                 settings.save();
-                res.status(200).send(settings);
+                res.status(200).send({ settings });
             }
             catch (err) {
                 console.log("[server]: error: ", err);
@@ -91,12 +93,102 @@ class SettingsController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const settings = yield settings_1.default.find();
+                if (!settings)
+                    return res.status(404).send({
+                        message: "no settings were found it",
+                    });
                 res.status(200).send(settings);
+                return;
             }
             catch (err) {
                 console.log(`[server]: error : ${err}`);
                 res.status(500).send({
-                    message: "error 500: internal error"
+                    message: "internal error"
+                });
+                return;
+            }
+        });
+    }
+    static update(req, res) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { websiteName, socialMedia, logo } = req.body;
+            // user validation
+            if (!req.user)
+                return res.status(403).send({
+                    message: "you must be logged in for create a new portfolio"
+                });
+            // validations        
+            if (!websiteName)
+                return res.status(400).send({
+                    message: "you must fill a name for your portfolio"
+                });
+            if (!logo)
+                return res.status(400).send({
+                    message: "you must fill a logo",
+                });
+            try {
+                const settings = yield SettingsController.getById(id);
+                if (!settings)
+                    return res.status(404).send({
+                        message: "settings was not found it",
+                    });
+                let files;
+                const data = {
+                    websiteName,
+                    logo: JSON.parse(logo),
+                    favIcon: settings.favIcon,
+                    socialMedia: socialMedia && JSON.parse(socialMedia) || {},
+                };
+                if (req.files)
+                    files = req.files;
+                if (files) {
+                    if ((!files["favIcon"] ||
+                        files["favIcon"][0].originalname.match(/\.(ico)$/)) && !settings.favIcon)
+                        return res.status(400).send({
+                            message: "the favicon must be in .ico file",
+                        });
+                    data.favIcon = files["favIcon"][0] ? handleFile_1.default.getUrlFromFile(files["favIcon"][0]) : settings.favIcon;
+                    if (files["logoImg"])
+                        data.logo.srcImg = files["logoImg"][0] ? handleFile_1.default.getUrlFromFile(files["logoImg"][0]) : settings.logo.srcImg;
+                }
+                if (!data.favIcon)
+                    return res.status(400).send({
+                        message: "you must choose a favicon for your portfolio"
+                    });
+                // logo validation
+                if (!data.logo)
+                    return res.status(400).send({
+                        message: "you must fill logo fields"
+                    });
+                if (!((_a = data.logo) === null || _a === void 0 ? void 0 : _a.altText) || !((_b = data.logo) === null || _b === void 0 ? void 0 : _b.link))
+                    return res.status(400).send({
+                        message: "you must fill the altText and link fields"
+                    });
+                const { id: userId } = req.user;
+                const owner = yield user_1.default.getById(userId, false);
+                if (!owner)
+                    return res.status(404).send({
+                        message: "user not found it"
+                    });
+                const newData = {
+                    owner,
+                    websiteName,
+                    favIcon: data.favIcon,
+                    logo: data.logo,
+                    socialMedia: data.socialMedia,
+                };
+                console.log(newData);
+                yield settings_1.default.update(newData, settings);
+                res.status(200).send({
+                    settings
+                });
+            }
+            catch (err) {
+                console.log("[server]: error: ", err);
+                res.status(500).send({
+                    message: "internal error"
                 });
             }
         });
@@ -109,10 +201,10 @@ class SettingsController {
     }
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { id = "" } = req.params;
             try {
-                if (req.params.id) {
-                    const { id } = req.params;
-                    const settings = SettingsController.getById(id);
+                if (id) {
+                    const settings = yield SettingsController.getById(id);
                     if (!settings)
                         return res.status(404).send({
                             message: "settings not found it",

@@ -16,6 +16,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../user"));
 // repository
 const project_1 = __importDefault(require("../../repository/project/project"));
+// utils
+const handleFile_1 = __importDefault(require("../../utils/handleFile"));
 class ProjectController {
     // create a new project
     static create(req, res) {
@@ -55,29 +57,25 @@ class ProjectController {
                 return res.status(400).send({
                     message: "you must not exceed 250 characters to resume your project"
                 });
-            if (resume.length > 50)
-                return res.status(400).send({
-                    message: "you must not exceed 50 chracters for your project title"
-                });
-            if (!req.file)
-                return res.status(400).send({
-                    message: "you must upload at least one photo for your project"
-                });
-            const { path } = req.file;
-            const srcImg = path ? path : "";
-            const { id } = req.user;
-            const owner = yield user_1.default.getById(id, false);
-            if (!owner)
-                return res.status(404).send({
-                    message: "user not found it"
-                });
             try {
+                if (!req.file)
+                    return res.status(400).send({
+                        message: "you must upload at least one photo for your project"
+                    });
+                // const { path } = req.file;
+                // const srcImg = path ? path : "";
+                const { id } = req.user;
+                const owner = yield user_1.default.getById(id, false);
+                if (!owner)
+                    return res.status(404).send({
+                        message: "user not found it"
+                    });
                 const data = {
                     owner,
                     title,
                     resume,
                     description,
-                    srcImg,
+                    srcImg: handleFile_1.default.getUrlFromFile(req.file),
                     mainLang,
                     urlDemo,
                     urlRepository,
@@ -104,57 +102,51 @@ class ProjectController {
     static update(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const project = yield ProjectController.getById(id);
-            if (!project)
-                return res.status(404).send({
-                    message: "project not found it",
-                });
-            const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
-            if (!title)
-                return res.status(404).send({
-                    message: "you must fill a title field for your project"
-                });
-            if (!resume)
-                return res.status(400).send({
-                    message: "you must fill a resume field of your project"
-                });
-            if (!description)
-                return res.status(400).send({
-                    message: "you must fill a description field of your project"
-                });
-            if (!mainLang)
-                return res.status(400).send({
-                    message: "you must fill a main language field of your project"
-                });
-            if (!urlDemo)
-                return res.status(400).send({
-                    message: "you must fill an url of your project demo"
-                });
-            if (!urlRepository)
-                return res.status(400).send({
-                    message: "you must fill an url of your project demo"
-                });
-            if (resume.length > 250)
-                return res.status(400).send({
-                    message: "you must not exceed 250 characters to resume your project"
-                });
-            if (resume.length > 50)
-                return res.status(400).send({
-                    message: "you must not exceed 50 chracters for your project title"
-                });
-            if (!req.file)
-                return res.status(400).send({
-                    message: "you must upload at least one photo for your project"
-                });
-            const { path } = req.file;
-            const srcImg = path ? path : "";
             try {
-                const data = {
+                const project = yield ProjectController.getById(id);
+                if (!project)
+                    return res.status(404).send({
+                        message: "project not found it",
+                    });
+                const { title, resume, description, mainLang, urlDemo, urlRepository } = req.body;
+                if (!title)
+                    return res.status(400).send({
+                        message: "you must fill a title field for your project"
+                    });
+                if (!resume)
+                    return res.status(400).send({
+                        message: "you must fill a resume field of your project"
+                    });
+                if (!description)
+                    return res.status(400).send({
+                        message: "you must fill a description field of your project"
+                    });
+                if (!mainLang)
+                    return res.status(400).send({
+                        message: "you must fill a main language field of your project"
+                    });
+                if (!urlDemo)
+                    return res.status(400).send({
+                        message: "you must fill an url of your project demo"
+                    });
+                if (!urlRepository)
+                    return res.status(400).send({
+                        message: "you must fill an url of your project demo"
+                    });
+                if (resume.length > 250)
+                    return res.status(400).send({
+                        message: "you must not exceed 250 characters to resume your project"
+                    });
+                if (!req.file && !project.srcImg)
+                    return res.status(400).send({
+                        message: "you must upload at least one photo for your project"
+                    });
+                let data = {
                     title,
                     resume,
                     description,
                     owner: project.owner,
-                    srcImg,
+                    srcImg: req.file ? handleFile_1.default.getUrlFromFile(req.file) : project.srcImg,
                     mainLang,
                     urlDemo,
                     urlRepository,
@@ -179,7 +171,11 @@ class ProjectController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const projects = yield project_1.default.find();
-                res.status(200).send(projects);
+                if (projects.length === 0)
+                    return res.status(404).send({
+                        message: "no project was found it",
+                    });
+                res.status(200).send({ projects });
             }
             catch (err) {
                 console.log(`[server]: error `, err);

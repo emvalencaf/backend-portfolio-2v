@@ -25,25 +25,28 @@ const settings_1 = __importDefault(require("../settings"));
 class SectionController {
     // create a section
     static create(req, res) {
-        var _a, _b, _c;
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // get the type by params
+                // get the type of section to be created by params
                 const { typeSection } = req.params;
                 const data = req.body;
                 if (!req.user)
                     return;
                 const { id } = req.user;
                 const owner = yield user_1.default.getById(id, false);
+                // it will check if there's a settings attached (by an id) in the body of the request
                 if (!data.settings)
                     return res.status(400).send({
                         message: "you must choose a setting to attached a section"
                     });
                 const settings = yield settings_1.default.getById(data.settings);
+                // it will check if the settings attached in the body's request is a valid one
                 if (!settings)
                     return res.status(404).send({
                         message: "settings not found it"
                     });
+                // each setting can only have one section of each seciton type 
                 if (settings === null || settings === void 0 ? void 0 : settings.menu) {
                     let isThereAMenuLink = false;
                     settings.menu.forEach((menuLink) => {
@@ -57,24 +60,33 @@ class SectionController {
                 }
                 if (owner)
                     data.owner = owner.name;
+                // it will check the files attached to the request body (only home and about section has files)
                 if (typeSection === "home" || typeSection === "about") {
-                    console.log("check home or about section images");
                     if (!req.files)
                         return res.status(400).send({
                             message: `you must upload a image for ${typeSection === "home" ? "the background" : "your profile"}`,
                         });
                     const files = req.files;
-                    ;
-                    if (typeSection === "home")
-                        data.backgroundImg = (_a = files["backgroundImg"][0]) === null || _a === void 0 ? void 0 : _a.path;
-                    data.biosData = JSON.parse(data.biosData);
-                    if (typeSection === "about") {
-                        data.biosData.profilePhoto.srcImg = (_b = files["picture"][0]) === null || _b === void 0 ? void 0 : _b.path;
-                        data.biosData.profilePhoto.altText = `profile picture`;
+                    if (typeSection === "home") {
+                        if (!files["backgroundImg"] || files["backgroundImg"].length === 0)
+                            return res.status(400).send({
+                                message: `you must upload a background image`,
+                            });
+                        data.backgroundImg = files["backgroundImg"][0].path;
+                    }
+                    else if (typeSection === "about") {
+                        if (!files["picture"] || files["picture"].length === 0)
+                            return res.status(400).send({
+                                message: "you must upload a profile picture",
+                            });
+                        data.biosData = JSON.parse(data.biosData);
+                        data.biosData.profilePhoto.srcImg = files["picture"][0].path;
                     }
                 }
                 let sanitated;
+                // it will validate the request body
                 try {
+                    // the method validate will throw an error telling what is wrong in the request body that will be catched and will be sent to the client
                     sanitated = SectionController.validate(typeSection, data);
                 }
                 catch (err) {
@@ -87,7 +99,7 @@ class SectionController {
                 const section = yield section_1.default.create(sanitated);
                 if (section) {
                     if (settings) {
-                        (_c = settings === null || settings === void 0 ? void 0 : settings.menu) === null || _c === void 0 ? void 0 : _c.push({
+                        (_a = settings === null || settings === void 0 ? void 0 : settings.menu) === null || _a === void 0 ? void 0 : _a.push({
                             children: typeSection,
                             link: typeSection,
                             icon: typeSection,
@@ -121,6 +133,26 @@ class SectionController {
             return sections;
         });
     }
+    // get al by users id
+    static getAll(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sections = yield section_1.default.getAll();
+                if (!sections)
+                    return res.status(404).send({
+                        message: "no sections were found it"
+                    });
+                return res.status(200).send(sections);
+            }
+            catch (err) {
+                console.log(err);
+                res.status(501).send({
+                    message: "internal error",
+                });
+                return;
+            }
+        });
+    }
     // a controller to callback getById or getAllBySettingsId
     static getByParams(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -143,9 +175,7 @@ class SectionController {
                         return res.status(404).send({
                             message: "no section was found it",
                         });
-                    return res.status(200).send({
-                        section,
-                    });
+                    return res.status(200).send(section);
                 }
             }
             catch (err) {
@@ -163,6 +193,7 @@ class SectionController {
             const data = req.body;
             const typeSection = req.body.typeSection;
             try {
+                // getting section by id
                 const section = yield SectionController.getById(id);
                 if (!section)
                     return res.status(404).send({
@@ -170,6 +201,7 @@ class SectionController {
                     });
                 let newData;
                 try {
+                    // it will validate de request body, if the field is invalid it will throw an error that will be catched
                     newData = SectionController.validate(typeSection, data);
                 }
                 catch (err) {

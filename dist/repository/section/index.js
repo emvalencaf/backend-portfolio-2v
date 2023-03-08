@@ -70,5 +70,10 @@ class SectionRepository {
             }).populate("projects");
         });
     }
+    static getAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield section_1.default.find({}).populate("projects");
+        });
+    }
 }
 exports.default = SectionRepository;

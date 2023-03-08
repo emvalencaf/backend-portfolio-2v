@@ -14,6 +14,7 @@ const uploadImage_1 = __importDefault(require("../../middlewares/uploadImage"));
 const router = express_1.default.Router();
 exports.SettingsRouter = router;
 router.get("/", settings_1.default.getAllSettings);
+router.get("/:id", auth_1.default.authGuard, settings_1.default.getByParams);
 router.post("/", auth_1.default.authGuard, uploadImage_1.default.uploader.fields([
     {
         name: "favIcon", maxCount: 1,
@@ -22,3 +23,11 @@ router.post("/", auth_1.default.authGuard, uploadImage_1.default.uploader.fields
         name: "logoImg", maxCount: 1,
     },
 ]), settings_1.default.create);
+router.put("/:id", auth_1.default.authGuard, uploadImage_1.default.uploader.fields([
+    {
+        name: "favIcon", maxCount: 1,
+    },
+    {
+        name: "logoImg", maxCount: 1,
+    },
+]), settings_1.default.update);

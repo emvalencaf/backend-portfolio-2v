@@ -40,6 +40,11 @@ export default class PortfolioRepository{
                 populate: {
                     path: "sections",
                     model: "Section",
+                    populate: {
+                        path: "projects",
+                        model: "Project",
+                        select: "_id resume description mainLang srcImg urlDemo urlRepository",
+                    }
                 }
             }
         ]);

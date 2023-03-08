@@ -19,6 +19,15 @@ class SettingsRepository {
             return yield settings_1.default.create(data);
         });
     }
+    static update(data, settings) {
+        return __awaiter(this, void 0, void 0, function* () {
+            settings.favIcon = data.favIcon;
+            settings.websiteName = data.websiteName;
+            settings.logo = data.logo;
+            settings.socialMedia = data.socialMedia;
+            yield settings.save();
+        });
+    }
     static find() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield settings_1.default.find({}).populate({
