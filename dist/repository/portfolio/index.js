@@ -47,7 +47,7 @@ class PortfolioRepository {
                         populate: {
                             path: "projects",
                             model: "Project",
-                            select: "_id resume description mainLang srcImg urlDemo urlRepository",
+                            select: "_id resume description mainLang srcImg urlDemo urlRepository title",
                         }
                     }
                 }
