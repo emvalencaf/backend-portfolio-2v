@@ -142,7 +142,9 @@ class SectionController {
                     return res.status(404).send({
                         message: "no sections were found it"
                     });
-                return res.status(200).send(sections);
+                return res.status(200).send({
+                    sections
+                });
             }
             catch (err) {
                 console.log(err);
@@ -175,7 +177,9 @@ class SectionController {
                         return res.status(404).send({
                             message: "no section was found it",
                         });
-                    return res.status(200).send(section);
+                    return res.status(200).send({
+                        section
+                    });
                 }
             }
             catch (err) {
@@ -192,6 +196,7 @@ class SectionController {
             const { id } = req.params;
             const data = req.body;
             const typeSection = req.body.typeSection;
+            // it will check the files attached to the request body (only home and about section has files)
             try {
                 // getting section by id
                 const section = yield SectionController.getById(id);
@@ -199,6 +204,49 @@ class SectionController {
                     return res.status(404).send({
                         message: "section not found it",
                     });
+                const dataMerged = {
+                    // about section
+                    biosData: typeSection === "about" && !!data.biosData ? JSON.parse(data.biosData) : section.biosData,
+                    workData: typeSection === "about" && !!data.workData ? JSON.parse(data.workData) : section.workData,
+                    educationData: typeSection === "about" && !!data.educationData ? JSON.parse(data.educationData) : section.educationData,
+                    urlDownload: typeSection === "about" && !!data.urlDownload ? data.urlDownload : section.urlDownload,
+                    // home section
+                    owner: typeSection === "home" ? section.owner : section.owner,
+                    ocupation: typeSection === "home" && !!data.ocupation ? data.ocupation : section.ocupation,
+                    mainStack: typeSection === "home" && !!data.mainStack ? data.mainStack : section.mainStack,
+                    backgroundImg: undefined,
+                    // skills section
+                    techs: typeSection === "skills" && !!data.techs ? data.techs : section.techs,
+                    // project section
+                    projects: typeSection === "projects" && !!data.projects ? data.projects : section.projects,
+                    title: "",
+                    icon: "home"
+                };
+                /*
+                let files;
+    
+                if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    
+                
+                if (files) {
+                    if (typeSection === "home") {
+                        if ((!files["backgroundImg"] || files["backgroundImg"].length === 0) && !section.backgroundImg) return res.status(400).send({
+                            message: `you must upload a background image`,
+                        });
+                        
+                        dataMerged.backgroundImg = files["backgroundImg"][0]? HandleFile.getUrlFromFile(files["backgroundImg"][0]) : section.backgroundImg;
+                    }
+                    
+                    if (typeSection === "about") {
+                        
+                        if (!files["picture"] && !section.biosData?.profilePhoto?.srcImg) return res.status(400).send({
+                            message: "you must upload a profile picture",
+                        });
+                        dataMerged.biosData.profilePhoto.srcImg = files["picture"][0] ? HandleFile.getUrlFromFile(files["picture"][0]) : section.biosData?.profilePhoto?.srcImg;
+                    }
+    
+                }*/
+                console.log("aqui? depois?");
                 let newData;
                 try {
                     // it will validate de request body, if the field is invalid it will throw an error that will be catched
@@ -210,9 +258,11 @@ class SectionController {
                         message: message,
                     });
                 }
+                console.log("new data: ", newData);
                 yield section_1.default.update(newData, section);
-                return res.status(204).send({
-                    message: `${section.title} was successfully updated`
+                console.log("section was updated?: ", section);
+                return res.status(200).send({
+                    section,
                 });
             }
             catch (err) {

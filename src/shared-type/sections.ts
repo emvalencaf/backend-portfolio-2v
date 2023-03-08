@@ -33,13 +33,13 @@ export interface ISection {
 
 export interface ICreateSectionData extends ISection {
     owner?: string;
-    techs?: string;
+    techs?: string | ITechData;
     ocupation?: string;
-    mainStack?: string;
+    mainStack?: string | string[];
     biosData?: IBiosData;
     workData?: string;
     educationData?: string;
-    projects?: string;
+    projects?: string | ObjectIdMongoose[] | string[];
     urlDownload?: string;
 }
 

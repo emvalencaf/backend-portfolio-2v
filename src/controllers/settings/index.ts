@@ -97,7 +97,9 @@ export default class SettingsController {
                 message: "no settings were found it",
             });
 
-            res.status(200).send(settings);
+            res.status(200).send({
+                settings
+            });
 
             return;
 
@@ -151,6 +153,7 @@ export default class SettingsController {
                 favIcon: settings.favIcon,
                 socialMedia: socialMedia && JSON.parse(socialMedia) || {},
             };
+            
             if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
 
@@ -201,7 +204,7 @@ export default class SettingsController {
 
             await SettingsRepository.update(newData, settings);
 
-            res.status(200).send({
+            res.status(204).send({
                 settings
             });
 

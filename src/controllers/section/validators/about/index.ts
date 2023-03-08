@@ -16,7 +16,7 @@ export default class AboutSectionValidator {
         // educationData validation
         if (!data.educationData) throw new Error("your about section must have some education data");
 
-        const educationData = JSON.parse(data.educationData);
+        const educationData =  typeof data.educationData === "string" ?  JSON.parse(data.educationData) : data.educationData;
 
         if (!educationData.courses && !educationData.higherEducation) throw new Error("your about section must have at some of your education data");
 
@@ -30,7 +30,7 @@ export default class AboutSectionValidator {
 
         if (!data.workData) throw new Error("your about section must have some work data");
 
-        const workData = JSON.parse(data.workData);
+        const workData = typeof data.workData === "string" ? JSON.parse(data.workData) : data.workData;
 
         if(workData.workExperience.length >= 1) {
             workData.workExperience.forEach(AboutSectionValidator.validateWorkData);

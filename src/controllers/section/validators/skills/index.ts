@@ -6,7 +6,7 @@ export default class SkillsSectionValidator{
 
         if (!data.techs) throw new Error("your skills sections must have tech data attached");
 
-        const techs = JSON.parse(data.techs);
+        const techs = typeof data.techs === "string" ? JSON.parse(data.techs) : data.techs;
 
         techs.forEach(SkillsSectionValidator.validateTech)
 

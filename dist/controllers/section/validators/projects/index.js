@@ -4,8 +4,7 @@ class ProjectsSectionValidator {
     static validate(data) {
         if (!data.projects)
             throw new Error("your project section must have projects attached");
-        const projects = JSON.parse(data.projects);
-        console.log(projects);
+        const projects = typeof data.projects === "string" ? JSON.parse(data.projects) : data.projects;
         if (projects.length < 1)
             throw new Error("you must attach at least one project to your project section");
         return {

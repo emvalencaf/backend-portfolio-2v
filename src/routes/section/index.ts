@@ -30,6 +30,14 @@ router.post("/:typeSection",
 
 router.put("/:id",
     Auth.authGuard,
+    UploadImageMiddleware.uploader.fields([
+        {
+            name: "backgroundImg", maxCount: 1,
+        },
+        {
+            name: "picture", maxCount: 1,
+        }
+    ]),
     SectionController.update,
 );
 

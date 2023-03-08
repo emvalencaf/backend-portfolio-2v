@@ -249,7 +249,7 @@ export default class ProjectController {
 
         } catch (err) {
             console.log(`[server]: error:`, err);
-            res.status(404).send({
+            res.status(500).send({
                 message: "internal error",
             });
             return;

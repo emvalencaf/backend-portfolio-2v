@@ -11,7 +11,7 @@ export default class HomeSectionValidator {
         
         if (!data.mainStack) throw new Error("your home section must have at least one of your code language");
         
-        const mainStack  = JSON.parse(data.mainStack);
+        const mainStack  =  typeof data.mainStack === "string" ? JSON.parse(data.mainStack): data.mainStack;
 
         if (mainStack instanceof Array === false) throw new Error("your home section must have at least one of your code language");
 

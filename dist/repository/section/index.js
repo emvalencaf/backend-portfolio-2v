@@ -47,7 +47,7 @@ class SectionRepository {
                     section.techs = data.techs;
             }
             if (section.title === "projects") {
-                if ((section === null || section === void 0 ? void 0 : section.projects) && (data === null || data === void 0 ? void 0 : data.rojects))
+                if ((section === null || section === void 0 ? void 0 : section.projects) && (data === null || data === void 0 ? void 0 : data.projects))
                     section.projects = data.projects;
             }
             if (section.title !== "projects" && section.title !== "about" && section.title !== "home" && section.title !== "skills") {

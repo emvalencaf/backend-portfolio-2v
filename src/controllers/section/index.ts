@@ -12,8 +12,9 @@ import SkillsSectionValidator from "./validators/skills";
 
 // type
 import { Request, Response } from "express";
-import { IAboutSection, ICreateSectionData, IHomeSection, IProjectsSection, ISection, ISkillsSection } from "../../shared-type/sections";
+import { IAboutSection, IBiosData, ICreateSectionData, IHomeSection, IProjectsSection, ISection, ISkillsSection } from "../../shared-type/sections";
 import SettingsController from "../settings";
+import HandleFile from "../../utils/handleFile";
 
 export default class SectionController {
 
@@ -56,15 +57,16 @@ export default class SectionController {
                 })
             }
 
+            
             if (owner) data.owner = owner.name;
 
             // it will check the files attached to the request body (only home and about section has files)
             if (typeSection === "home" || typeSection === "about") {
-                
+
                 if (!req.files) return res.status(400).send({
                     message: `you must upload a image for ${typeSection === "home" ? "the background" : "your profile"}`,
                 })
-                
+
                 const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
                 if (typeSection === "home") {
@@ -83,26 +85,26 @@ export default class SectionController {
 
                     data.biosData = JSON.parse(data.biosData);
                     data.biosData.profilePhoto.srcImg = files["picture"][0].path;
-                    
+
                 }
-                
+
             }
 
             let sanitated;
 
             // it will validate the request body
-            try{
-                
+            try {
+
                 // the method validate will throw an error telling what is wrong in the request body that will be catched and will be sent to the client
                 sanitated = SectionController.validate(typeSection, data);
 
-            } catch (err){
+            } catch (err) {
                 const { message } = err as Error;
                 return res.status(400).send({
                     message: message,
                 });
             }
-            
+
             sanitated.settings = settings;
             const section = await SectionRepository.create(sanitated);
 
@@ -122,7 +124,7 @@ export default class SectionController {
             })
 
         } catch (err) {
-            console.log("[server]: error: ",err);
+            console.log("[server]: error: ", err);
 
             res.status(500).send({
                 message: "internal error",
@@ -153,12 +155,14 @@ export default class SectionController {
 
         try {
             const sections = await SectionRepository.getAll();
-    
+
             if (!sections) return res.status(404).send({
                 message: "no sections were found it"
             });
 
-            return res.status(200).send(sections);
+            return res.status(200).send({
+                sections
+            });
 
         } catch (err) {
             console.log(err);
@@ -199,11 +203,13 @@ export default class SectionController {
                     message: "no section was found it",
                 });
 
-                return res.status(200).send(section)
+                return res.status(200).send({
+                    section
+                })
             }
 
         } catch (err) {
-            console.log(`[server]: error: `,err);
+            console.log(`[server]: error: `, err);
             res.send({
                 message: "internal error",
             });
@@ -215,22 +221,69 @@ export default class SectionController {
     // update a section
     static async update(req: Request, res: Response) {
         const { id } = req.params;
-        
+
         const data = req.body;
 
         const typeSection: "home" | "about" | "projects" | "other" | "skills" = req.body.typeSection;
 
-        try{
+        // it will check the files attached to the request body (only home and about section has files)
+
+        try {
             // getting section by id
             const section = await SectionController.getById(id);
 
+            
             if (!section) return res.status(404).send({
                 message: "section not found it",
             });
-
-            let newData: ISection | IHomeSection | ISkillsSection | IProjectsSection | IAboutSection;
-            try{
             
+            const dataMerged = {
+                // about section
+                biosData: typeSection === "about" && !!data.biosData ? JSON.parse(data.biosData) as IBiosData : section.biosData,
+                workData: typeSection === "about" && !!data.workData ? JSON.parse(data.workData) : section.workData,
+                educationData: typeSection === "about" && !!data.educationData ? JSON.parse(data.educationData) : section.educationData,
+                urlDownload: typeSection === "about" && !!data.urlDownload ? data.urlDownload as string : section.urlDownload,
+                // home section
+                owner: typeSection === "home" ? section.owner : section.owner,
+                ocupation: typeSection === "home" && !!data.ocupation ? data.ocupation as string : section.ocupation,
+                mainStack: typeSection === "home" && !!data.mainStack ? data.mainStack as string : section.mainStack,
+                backgroundImg: undefined,
+                // skills section
+                techs: typeSection === "skills" && !!data.techs ? data.techs : section.techs,
+                // project section
+                projects: typeSection === "projects" && !!data.projects ? data.projects : section.projects,
+                title: "",
+                icon: "home"
+            }
+            /*
+            let files;
+
+            if (req.files) files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+            
+            if (files) {
+                if (typeSection === "home") {
+                    if ((!files["backgroundImg"] || files["backgroundImg"].length === 0) && !section.backgroundImg) return res.status(400).send({
+                        message: `you must upload a background image`,
+                    });
+                    
+                    dataMerged.backgroundImg = files["backgroundImg"][0]? HandleFile.getUrlFromFile(files["backgroundImg"][0]) : section.backgroundImg;
+                }
+                
+                if (typeSection === "about") {
+                    
+                    if (!files["picture"] && !section.biosData?.profilePhoto?.srcImg) return res.status(400).send({
+                        message: "you must upload a profile picture",
+                    });
+                    dataMerged.biosData.profilePhoto.srcImg = files["picture"][0] ? HandleFile.getUrlFromFile(files["picture"][0]) : section.biosData?.profilePhoto?.srcImg;
+                }
+
+            }*/
+            console.log("aqui? depois?")
+            let newData: ISection | IHomeSection | ISkillsSection | IProjectsSection | IAboutSection;
+            try {
+
+
                 // it will validate de request body, if the field is invalid it will throw an error that will be catched
                 newData = SectionController.validate(typeSection, data);
 
@@ -241,14 +294,18 @@ export default class SectionController {
                 });
             }
 
+            console.log("new data: ", newData);
+
             await SectionRepository.update(newData, section);
 
-            return res.status(204).send({
-                message: `${section.title} was successfully updated`
+            console.log("section was updated?: ", section);
+
+            return res.status(200).send({
+                section,
             });
 
-        } catch(err) {
-            console.log("[server]: error:",err);
+        } catch (err) {
+            console.log("[server]: error:", err);
             res.status(500).send({
                 message: "internal error",
             });

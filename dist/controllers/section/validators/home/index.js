@@ -5,7 +5,7 @@ class HomeSectionValidator {
         const { owner, ocupation, backgroundImg, } = data;
         if (!data.mainStack)
             throw new Error("your home section must have at least one of your code language");
-        const mainStack = JSON.parse(data.mainStack);
+        const mainStack = typeof data.mainStack === "string" ? JSON.parse(data.mainStack) : data.mainStack;
         if (mainStack instanceof Array === false)
             throw new Error("your home section must have at least one of your code language");
         if ((mainStack === null || mainStack === void 0 ? void 0 : mainStack.length) === 0)

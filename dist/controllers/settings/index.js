@@ -97,7 +97,9 @@ class SettingsController {
                     return res.status(404).send({
                         message: "no settings were found it",
                     });
-                res.status(200).send(settings);
+                res.status(200).send({
+                    settings
+                });
                 return;
             }
             catch (err) {
@@ -181,7 +183,7 @@ class SettingsController {
                 };
                 console.log(newData);
                 yield settings_1.default.update(newData, settings);
-                res.status(200).send({
+                res.status(204).send({
                     settings
                 });
             }

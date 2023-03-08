@@ -65,7 +65,7 @@ export default class SectionRepository{
        
         if (section.title === "projects") {
 
-            if (section?.projects && data?.rojects) section.projects = data.projects;
+            if (section?.projects && data?.projects) section.projects = data.projects;
 
         }
         
